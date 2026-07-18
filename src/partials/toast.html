@@ -1,0 +1,29 @@
+<div class="fixed bottom-6 right-6 z-100 flex flex-col gap-3 pointer-events-none">
+    <template s-for="toast in $store.ToastStore.toasts">
+        <div class="pointer-events-auto flex items-center w-full max-w-sm p-4 bg-app-card border border-brand-accent rounded-2xl shadow-xl animate-in slide-in-from-right-5 fade-in duration-300"
+            role="alert" s-key="toast.id">
+
+            <div
+                class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-brand-primary bg-brand-soft rounded-lg">
+                <svg s-show="toast.type === 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+                <svg s-show="toast.type !== 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0114 0z" />
+                </svg>
+            </div>
+
+            <div class="mx-4 text-sm font-bold text-app-text tracking-tight" s-text="toast.message"></div>
+
+            <button on:click="$store.ToastStore.remove(toast.id)" type="button"
+                class="ms-auto flex items-center justify-center text-app-muted hover:text-app-text hover:bg-app-bg rounded-lg w-8 h-8 transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </template>
+</div>

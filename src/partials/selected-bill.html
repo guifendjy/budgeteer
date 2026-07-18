@@ -1,0 +1,204 @@
+<template s-if="!!$store.SelectedBillStore.selectedBill?.id">
+    <div s-ref="selectedBillRef" class="bg-app-card border border-app-border rounded-2xl p-6">
+
+        <div s-state="{showModal: false}" class="mb-4 flex flex-1/3 justify-end">
+            {{> delete-button requestDelete="showModal=true" }}
+            <template s-if="showModal">
+                {{> confirm-modal
+                title="Delete Entry?"
+                content="This action is permanent and will immediately affect your Safe-to-Spend calculation."
+                confirm="()=>{
+                $store.BillStore.delete($store.SelectedBillStore.selectedBill?.id);
+                showModal=false;
+                }"
+                cancel="showModal=false"
+                }}
+            </template>
+        </div>
+        <div s-state="FieldEditState" class="header flex px-1 pb-1.5 border-b border-app-border">
+            <div class="flex-1">
+                <h3 class="text-lg font-black text-app-text tracking-tighter" s-show="activeField !== 'name'"
+                    s-text="$store.SelectedBillStore.selectedBill?.name" on:click="isEditing && (activeField = 'name')">
+                </h3>
+
+                <!-- shows when in editing mode -->
+                <input on:change="activeFieldValue = $target.value" s-show="activeField === 'name' " s-effect-focus
+                    type="text" s-value="$store.SelectedBillStore.selectedBill?.name"
+                    class="bg-transparent border-b-2 border-brand-soft outline-none font-black text-lg text-app-text w-full">
+
+
+
+                <p class=" text-xs text-app-muted mt-1 font-mono pb-1">
+                    Bill Stream · Due · <span
+                        s-text="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: true, prefix: false })"></span>
+                </p>
+            </div>
+            <!-- place isEditing state at the top to now when to trigger fields to be be in editing mode -->
+            <div
+                on:click="setActiveField('name', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'name', v))">
+                {{> edit-component}}
+            </div>
+        </div>
+
+
+        <!-- fields -->
+        <div class="space-y-3 mt-4">
+
+            <div s-state="FieldEditState" class="flex justify-between items-center">
+                <span class="text-app-muted shrink-0">Amount</span>
+                <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                    <span s-show="activeField !== 'amount'"
+                        s-text="$store.HelpersStore.$formatCurrency($store.SelectedBillStore.selectedBill?.amount, $store.UserStore.settings.currency)"
+                        class="font-black text-app-text"></span>
+
+                    <input on:change="activeFieldValue = parseFloat($target.value)" s-show="activeField === 'amount'"
+                        s-effect-focus type="number" s-value="$store.SelectedBillStore.selectedBill?.amount"
+                        class="bg-transparent border-b-2 border-brand-soft outline-none font-black text-sm text-app-text w-auto max-w-25 text-right">
+
+                    <div
+                        on:click="setActiveField('amount', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'amount', v))">
+                        {{> edit-component }}
+                    </div>
+                </div>
+            </div>
+
+            <div s-state="FieldEditState" class="flex justify-between items-center">
+                <span class="text-app-muted shrink-0">Due Date</span>
+                <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                    <span s-show="activeField !== 'due_date'" class="font-mono text-sm text-app-text"
+                        s-text="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: false, prefix: false})"></span>
+
+                    <!-- needs to match web browsers input/> type="date" -> format -->
+                    <input on:change="activeFieldValue = $target.value" s-show="activeField === 'due_date'"
+                        s-effect-focus type="date"
+                        s-value="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: false, prefix: false, format:'YYYY-MM-DD' })"
+                        class="bg-transparent rounded-lg font-mono font-bold text-xs text-app-text border border-app-border/50 px-2 py-1 outline-none focus:border-brand-primary transition-all">
+
+                    <div
+                        on:click="setActiveField('due_date', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'due_date', v))">
+                        {{> edit-component }}
+                    </div>
+                </div>
+            </div>
+
+            <div s-state="FieldEditState" class="flex justify-between items-center">
+                <span class="text-app-muted shrink-0">Category</span>
+                <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                    <span s-show="activeField !== 'category'"
+                        class="font-mono text-sm text-app-text uppercase tracking-tighter"
+                        s-text="$store.SelectedBillStore.selectedBill?.metadata.category"></span>
+                    <!-- CATEGORY OPTIONS -->
+                    <select on:change="activeFieldValue = $target.value"
+                        class="bg-transparent border-b-2 border-brand-soft outline-none font-mono text-sm text-app-text w-auto text-right cursor-pointer scheme-dark"
+                        s-show="activeField === 'category' " s-effect-focus name="bill-category" id="bill-category"
+                        s-value="$store.SelectedBillStore.selectedBill?.metadata.category">
+                        <option value="housing">
+                            housing
+                        </option>
+                        <option value="utilities">
+                            utilities
+                        </option>
+                        <option value="transportation">
+                            transportation
+                        </option>
+                        <option value="food">
+                            food
+                        </option>
+                        <option value="health">
+                            health
+                        </option>
+                        <option value="financial">
+                            financial
+                        </option>
+                        <option value="personal">
+                            personal
+                        </option>
+                    </select>
+
+                    <div
+                        on:click="setActiveField('category', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'metadata', { ...$store.SelectedBillStore.selectedBill?.metadata, category: v }))">
+                        {{> edit-component }}
+                    </div>
+                </div>
+            </div>
+
+            <div s-state="FieldEditState" class="flex justify-between items-center">
+                <span class="text-app-muted shrink-0">Recurrence</span>
+                <div class="flex items-center gap-3 justify-end ml-4">
+                    <span s-show="activeField !== 'recurrence'"
+                        class="font-mono text-sm text-app-text uppercase tracking-tighter"
+                        s-text="$store.SelectedBillStore.selectedBill?.recurrence"></span>
+
+                    <select on:change="activeFieldValue = $target.value" s-show="activeField === 'recurrence'"
+                        s-effect-focus s-value="$store.SelectedBillStore.selectedBill?.recurrence"
+                        class="bg-transparent border-b-2 border-brand-soft outline-none font-mono text-sm text-app-text w-auto text-right cursor-pointer scheme-dark">
+                        <option value="monthly">monthly</option>
+                        <option value="bi-weekly">bi-Weekly</option>
+                        <option value="weekly">weekly</option>
+                        <option value="yearly">yearly</option>
+                    </select>
+
+                    <div
+                        on:click="setActiveField('recurrence', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'recurrence', v))">
+                        {{> edit-component }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- if overdue give in app option to mark as paid -->
+        <div s-show="$store.SelectedBillStore.selectedBill?.status == 'overdue' "
+            class="mt-3 flex items-center justify-between gap-3
+         rounded-lg border
+         border-[color-mix(in_srgb,var(--status-red)_30%,transparent)]
+         bg-[color-mix(in_srgb,var(--status-red)_6%,transparent)]
+         px-3 py-2">
+
+            <div>
+                <p class="text-xs font-medium text-status-danger">
+                    Bill overdue
+                </p>
+                <p class="text-[11px] text-app-muted">
+                    Already paid? Mark to clear it
+                </p>
+            </div>
+
+            <!-- Mark as paid button -->
+            <button on:click="$store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'status', 'paid')"
+                class="text-xs font-medium
+           px-2.5 py-1
+           rounded-md
+           bg-status-paid/10
+           text-status-paid
+           hover:bg-status-paid/20
+           transition-colors">
+                Mark paid
+            </button>
+        </div>
+
+        <!-- hide for now. check to see which tier the user is using show if they are paid users -->
+        <template s-if="false">
+            {{> bill-metadata }}
+        </template>
+
+    </div>
+</template>
+
+<!-- default view -->
+<div s-show="!$store.SelectedBillStore.selectedBill?.id"
+    class="mt-6 space-y-4 p-15 bg-app-bg dark:bg-app-card border border-app-border rounded-lg shadow-xs">
+    <div class="flex flex-col items-center justify-center text-app-muted">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <p class="my-2 text-sm font-medium">Select a bill to see details</p>
+        <p class="text-sm sr-only sm:not-sr-only">Click any bill in the stream to view and edit its metadata.</p>
+    </div>
+    <div class="max-w-[50%] bg-app-bg/20 mx-auto border border-dashed border-brand-soft rounded-lg px-2 py-2">
+        {{> add-bill-button }}
+    </div>
+</div>

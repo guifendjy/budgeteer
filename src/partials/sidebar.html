@@ -1,0 +1,51 @@
+<div class="p-4 border-b border-app-border">
+    <h2 class="text-sm font-semibold text-app-muted uppercase tracking-wide">
+        Upcoming Obligations
+    </h2>
+    <p class="font-semibold mt-1">Bill Stream.</p>
+</div>
+
+<div class="p-4 space-y-3">
+    <template s-for="bill in $store.BillStore.bills">
+        <!-- select a bill -->
+        <div on:click="()=>{
+            $store.SelectedBillStore.selectBill(bill);
+            $store.BillStore.bills = $store.BillStore.bills.map(b => ({
+                ...b,
+                selected: b.id === bill.id
+            }));
+            $store.OpenPanelStore.setPanel(null);
+        }" s-class="$store.SelectedBillStore.bill?.id === bill.id ? 'border-brand-accent bg-brand-soft': 'border-app-border' "
+            class="border bg-app-card  hover:bg-app-bg dark:bg-app-bg dark:hover:bg-app-bg/70
+         rounded-xl px-3 py-2.5
+          transition-transform duration-150
+         cursor-pointer">
+
+            <!-- Top Row -->
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-app-text" s-text="bill.name"></span>
+                <span class="font-mono text-sm font-semibold"
+                    s-text="$store.HelpersStore.$formatCurrency(bill.amount, $store.UserStore.settings.currency)"></span>
+            </div>
+
+            <!-- Bottom Row -->
+            <div class="flex items-center justify-between mt-1.5">
+                <p class="text-[11px]" s-class="
+                                bill.status === 'overdue'
+                                ? 'text-status-overdue'
+                                : 'text-app-muted'
+                            " s-text="$store.HelpersStore.$formatDate(bill.due_date)">
+                </p>
+
+                <span s-show="bill.status === 'overdue'" class="px-2 py-0.5 rounded-full
+             text-[10px] font-medium
+             bg-status-overdue/10 text-status-overdue">
+                    Overdue
+                </span>
+            </div>
+
+        </div>
+    </template>
+
+    {{> add-bill-button }}
+</div>

@@ -1,0 +1,68 @@
+<header s-state="HeaderState"  class="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-app-card border-b border-app-border">
+    <div class="flex items-center gap-2 shrink-0">
+        <div
+            class="w-8 h-8 bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-brand-primary/20">
+            B</div>
+        <span class="hidden lg:inline font-bold text-lg tracking-tight text-app-text">Budgeteer.</span>
+    </div>
+
+    <div class="flex-1 max-w-md mx-8 relative">
+        {{> query-field }}
+        <div s-show="isExpanded" on:click="isExpanded = false" class="fixed inset-0 z-30"></div>
+    </div>
+
+    {{> query-pallette }}
+
+
+    <div s-state="{settingsOpen:false, notificationsOpen:false}" class="flex items-center gap-2">
+
+        <template s-if="$store.UserStore.tier == 'free'">
+            <div
+                class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-app-bg border border-app-border mr-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
+                <span class="text-[9px] text-app-muted uppercase font-black tracking-widest">Local Node</span>
+            </div>
+        </template>
+
+        <div class="flex items-center">
+
+            <button on:click="settingsOpen = true"
+                class="group p-2 rounded-xl hover:bg-brand-primary/5 transition-all duration-300 flex items-center gap-2">
+                <div
+                    class="w-9 h-9 flex items-center justify-center rounded-lg bg-app-bg border border-app-border group-hover:border-brand-primary/30 transition-all">
+                    <svg class="w-4 h-4 text-app-muted group-hover:text-brand-primary transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <circle cx="12" cy="12" r="3" stroke-width="1.5" />
+                    </svg>
+                </div>
+            </button>
+
+            <!-- will "s-show" only show when notification pipeline -->
+            <button x-show="false" on:click="notificationsOpen = true"
+                class="group p-2 rounded-xl hover:bg-brand-primary/5 transition-all duration-300 flex items-center gap-2">
+                <div
+                    class="relative w-9 h-9 flex items-center justify-center rounded-lg bg-app-bg border border-app-border group-hover:border-brand-primary/30 transition-all">
+                    <div class="absolute top-2 right-2 w-1.5 h-1.5 bg-brand-primary rounded-full ring-2 ring-app-card">
+                    </div>
+
+                    <svg class="w-4 h-4 text-app-muted group-hover:text-brand-primary transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </div>
+            </button>
+
+        </div>
+
+        <template s-if="settingsOpen">
+            {{> settings }}
+        </template>
+
+        <template s-if="notificationsOpen">
+            {{> notifications }}
+        </template>
+    </div>
+</header>

@@ -1,0 +1,23 @@
+<div class="flex items-center gap-4 py-2 group cursor-default">
+    <div class="flex-1">
+        <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+        </span>
+    </div>
+
+    <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+        <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+            s-text="isEditing ? 'Save' : 'Edit'">
+        </span>
+
+        <div class="relative w-4 h-4">
+            <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+            <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+    </div>
+</div>

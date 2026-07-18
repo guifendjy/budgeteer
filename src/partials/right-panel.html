@@ -1,0 +1,163 @@
+<div class="flex flex-col gap-4 pb-4 justify-between h-full">
+    <template s-if="$store.BudgetStore.categoryExposure.length">
+        <div s-state="{active: 0}" class="overflow-hidden overflow-y-auto">
+            <h3 class="font-semibold">Budget Health.</h3>
+            <div class="mt-4 flex gap-4 text-[10px] font-medium border-b border-app-border/50">
+                <button s-class="{
+            'text-brand-primary': active === 0,
+            'border-b-2': active === 0,
+            'border-brand-primary': active === 0,
+            'text-app-muted': active !== 0,
+            'font-bold': active === 0
+            }" on:click="active = 0" class="pb-1 transition-colors">Category Exposure</button>
+                <button s-class="{
+            'text-brand-primary': active === 1,
+            'border-b-2': active === 1,
+            'border-brand-primary': active === 1,
+            'text-app-muted': active !== 1,
+            'font-bold': active === 0
+            }" on:click="active = 1" class="pb-1 transition-colors">Commitment Ratio</button>
+            </div>
+            <!-- Category Exposure Content -->
+            <div s-show="active==0" class="mt-6 space-y-5">
+                <template s-for="category in $store.BudgetStore.categoryExposure">
+                    <div s-key="category.name" class="space-y-1">
+                        <div
+                            class="flex justify-between text-[10px] font-black uppercase tracking-widest text-app-muted">
+                            <span s-text="category.name"></span>
+                            <span s-text="category.percentage.toFixed(2) + '%' "></span>
+                        </div>
+
+                        <div class="h-1 w-full bg-app-bg rounded-full overflow-hidden">
+                            <div class="h-full bg-brand-primary transition-all duration-500"
+                                s-style="{width: category.percentage.toFixed(2) + '%'}" s-class="{
+                                        'bg-status-overdue': category.percentage > 50,
+                                        'bg-brand-primary': category.percentage <= 50
+                                    }">
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] text-app-muted mt-1 font-medium">
+                            <span class="text-app-text font-bold"
+                                s-text="$store.HelpersStore.$formatCurrency(category.amount, $store.UserStore.settings.currency)"></span>
+                            of <span
+                                s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.monthly_income_anchor, $store.UserStore.settings.currency)"></span>
+                            est. montly income
+                        </p>
+                    </div>
+                </template>
+
+            </div>
+            <!-- Commitment Ratio Content -->
+            <div s-show="active==1"
+                class="mt-5 bg-app-card border border-app-border rounded-4xl p-6 flex flex-col items-center shadow-xl max-w-sm mx-auto">
+
+
+
+                <!-- SEMI-CIRCLE GAUGE WITH ZONES -->
+                <div class="relative w-48 h-24 overflow-hidden">
+                    <svg viewBox="0 0 100 50" class="w-full h-full">
+                        <!-- 1. BACKGROUND TRACK: DANGER ZONE (The full arc in a dim red/muted tone) -->
+                        <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="8"
+                            class="text-status-overdue/10" stroke-linecap="round" />
+
+                        <!-- 2. BACKGROUND TRACK: SAFE ZONE (A shorter arc, e.g., up to 70%, in a dim primary tone) -->
+                        <!-- stroke-dasharray="88 126" represents roughly 70% of the 126 unit semi-circle -->
+                        <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="8"
+                            class="text-brand-primary/20" stroke-linecap="round" stroke-dasharray="88 126" />
+
+                        <!-- 3. DYNAMIC PROGRESS BAR -->
+                        <!-- We calculate the dasharray: (Percentage / 100) * 126 -->
+                        <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="10"
+                            s-class="($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) > 0.7 ? 'text-status-overdue' : 'text-brand-primary'"
+                            class="transition-all duration-1000 ease-out" stroke-linecap="round"
+                            s-style="'stroke-dasharray: ' + (($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 126) + ' 126'" />
+                    </svg>
+
+                    <!-- Center Percentage -->
+                    <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center">
+                        <span class="text-2xl font-mono font-bold tracking-tighter"
+                            s-class="($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) > 0.7 ? 'text-status-overdue' : 'text-app-text'">
+                            <span
+                                s-text="Math.round(($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 100) + '%'"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- COMPARISON DATA -->
+                <div class="grid grid-cols-2 gap-8 w-full mt-6 pt-6 border-t border-app-border/10">
+                    <div class="text-center">
+                        <p class="text-[8px] font-black text-app-muted uppercase tracking-widest mb-1">Total Bills</p>
+                        <p class="text-xs font-mono font-bold text-status-overdue"
+                            s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.total_obligations, $store.UserStore.settings.currency)"></p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[8px] font-black text-app-muted uppercase tracking-widest mb-1">Est. Income</p>
+                        <p class="text-xs font-mono font-bold text-app-text"
+                            s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.monthly_income_anchor, $store.UserStore.settings.currency)"></p>
+                    </div>
+                </div>
+
+                <!-- ARCHITECT'S INSIGHT -->
+                <p class="mt-6 text-[10px] text-app-muted text-center leading-relaxed italic opacity-80 px-4">
+                    Approximately <span class="text-app-text font-bold"
+                        s-text="Math.round(($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 100) + '%'"></span>
+                    of your monthly inflow is allocated to monthly obligations.
+                </p>
+            </div>
+        </div>
+    </template>
+
+    <!-- default view -->
+    <template s-if="!$store.BudgetStore.categoryExposure.length">
+        <div class="p-5 bg-app-card rounded-[40px] border border-app-border shadow-sm transition-all duration-300">
+
+            <div class="mb-4">
+                <h3 class="text-2xl font-black text-app-text tracking-tighter">Category Exposure</h3>
+            </div>
+
+            <div class="flex flex-col items-center py-4">
+
+                <div
+                    class="w-full space-y-4 mb-6 opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none">
+                    <div class="space-y-2">
+                        <div class="h-2 w-24 bg-app-muted rounded-full"></div>
+                        <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="h-2 w-16 bg-app-muted rounded-full"></div>
+                        <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="h-2 w-20 bg-app-muted rounded-full"></div>
+                        <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                    </div>
+                </div>
+
+                <div class="relative z-10 -mt-16 text-center">
+                    <div
+                        class="w-14 h-14 bg-app-bg border border-app-border rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4 shadow-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                    </div>
+                    <h4 class="text-sm font-black text-app-text tracking-tight mb-1">No commitments found</h4>
+                    <p
+                        class="text-[10px] font-bold text-app-muted uppercase tracking-widest max-w-45 mx-auto leading-relaxed">
+                        Add your first bill to see how it impacts your monthly load.
+                    </p>
+
+                    <button on:click="()=>{
+                $store.OpenPanelStore.closePanel();
+                $refs.queryInput.focus();
+                }" class="mt-4 px-6 py-3 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white border border-brand-primary/20 rounded-xl font-black text-[9px] uppercase tracking-[0.2em] transition-all active:scale-95">
+                        Add First Bill
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- pro feature card (only show if user is using free tier. it manages it's own state) -->
+    {{> pro-tier-card }}
+</div>

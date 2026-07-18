@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<!-- Possible lang options: en (English), fr (French), es (Spanish), de (German), it (Italian), pt (Portuguese), ru (Russian), ja (Japanese), zh (Chinese), ar (Arabic), hi (Hindi) -->
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Budgeteer</title>
+  <link rel="manifest" href="/manifest.json">
+</head>
+
+<!-- empty s-state here allows the engine to start gathering directives from the root, since app is modular -->
+
+<body s-state>
+  <!-- loading screen => theme won't apply to pre-loader untill css files loads -->
+  <div id="pre-loader" s-effect="()=>{
+    const el = $target;
+    setTimeout(()=> el.remove(), 1000);
+  }">
+
+
+    <style>
+      @keyframes logo-pulse {
+
+        0%,
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 0px rgba(13, 77, 77, 0));
+        }
+
+        50% {
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 20px rgba(13, 77, 77, 0.2));
+        }
+      }
+
+      #pre-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #020617;
+        color: #f8fafc;
+        transition: opacity 0.4s ease-out;
+
+        .loader-content {
+          animation: logo-pulse 2s ease-in-out infinite;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .loader-icon {
+          width: 80px;
+          height: 80px;
+
+          background: #2dd4bf;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-family: sans-serif;
+          font-weight: 900;
+          font-size: 48px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .loader-text {
+          margin-top: 10px;
+          font-family: sans-serif;
+          font-weight: 900;
+          font-size: 32px;
+          color: #dce0e7;
+          letter-spacing: -0.05em;
+        }
+
+        .loader-dot {
+          color: #0d4d4d;
+        }
+      }
+    </style>
+
+    <div class="loader-content">
+      <div class="loader-icon">B</div>
+      <h1 class="loader-text">Budgeteer<span class="loader-dot">.</span></h1>
+    </div>
+  </div>
+  {{> onboarding }}
+  <div s-show="$store.BudgetStore.isInitialized" id="app" class="h-screen overflow-hidden
+            bg-app-bg text-app-text
+            font-sans antialiased text-[14px]
+            flex flex-col">
+
+    <!-- header -->
+    {{> header }}
+
+    <div class="flex flex-1 min-h-0 relative">
+      {{> panel-backdrop }}
+      <!-- Sidebar -->
+      <aside
+        s-class="$store.OpenPanelStore.openPanel === 'left' ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+        class="absolute lg:static inset-y-0 left-0 z-40
+             w-72 lg:flex-1
+             pb-10
+             bg-app-card border-r border-app-border
+             transform transition-transform duration-200
+             lg:block
+             overflow-y-auto min-h-0">
+        {{> sidebar }}
+      </aside>
+
+      <!-- Main -->
+      <main class="flex-2 p-6 pb-20 space-y-6
+                 overflow-y-auto min-h-0">
+        {{> main-view }}
+      </main>
+
+      {{> panel-backdrop }}
+      <!-- Right Panel -->
+      <aside
+        s-class="$store.OpenPanelStore.openPanel === 'right' ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
+        class="absolute lg:static inset-y-0 right-0 z-40
+             w-72 lg:flex-1.5
+             bg-app-card border-l border-app-border
+             p-6 space-y-6
+             transform transition-transform duration-200
+             lg:block
+             overflow-y-auto min-h-0">
+        {{> right-panel }}
+      </aside>
+      <!-- fab shows side panels on small screens -->
+      {{> fab }}
+
+    </div>
+
+    <!-- toast -->
+    {{> toast }}
+  </div>
+  <script type="module" defer src="/src/main.js"></script>
+</body>
+
+</html>

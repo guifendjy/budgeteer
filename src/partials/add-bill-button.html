@@ -1,0 +1,22 @@
+<!-- focuses query input -->
+<button on:click="$refs.queryInput.focus()" class="w-full flex items-center justify-between
+           rounded-lg border border-dashed border-app-border
+           bg-app-bg/60
+           px-3 py-2
+           text-left
+           hover:bg-app-bg
+           transition-colors">
+
+    <span class="flex items-center gap-2 text-xs text-app-muted">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add bill
+    </span>
+
+    <span class="text-[10px] text-app-muted font-mono">
+        +
+    </span>
+</button>

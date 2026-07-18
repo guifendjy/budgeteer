@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  /* Surface Colors */
+  --color-app-bg: var(--bg-main);
+  --color-app-card: var(--bg-card);
+  --color-app-border: var(--border);
+
+  /* Text Colors */
+  --color-app-text: var(--text-main);
+  --color-app-muted: var(--text-muted);
+
+  /* Brand Accents */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-soft: var(--brand-soft);
+
+  /* Status Colors */
+  --color-status-overdue: var(--status-red);
+  --color-status-pending: var(--status-amber);
+  --color-status-paid: var(--status-green);
+  --color-status-danger: var(--status-red);
+
+  /* Health Colors */
+  --color-health-high: var(--status-red);
+  --color-health-medium: var(--status-amber);
+  --color-health-low: var(--status-green);
+  --color-health-safe: var(--status-green);
+}
+
+:root {
+  /* Light Theme (Petroleum & Ink) */
+  --bg-main: #efeff0;
+  --bg-card: #ffffff;
+  --text-main: #020617;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --border-hover: #cbd5e1;
+
+  /* Brand Petroleum Palette */
+  --brand-primary: #0d4d4d;
+  --brand-accent: #2dd4bf;
+  --brand-soft: #f0fdfa;
+
+  /* Status Logic */
+  --status-red: #ef4444;
+  --status-amber: #f59e0b;
+  --status-green: #22c55e;
+}
+
+[data-theme="dark"] {
+  /* Dark Theme (Deep Sea) */
+  --bg-main: #020617;
+  --bg-card: #0f172a;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #1e293b;
+  --border-hover: #334155;
+
+  /* Brand Adjustment */
+  --brand-primary: #2dd4bf;
+  --brand-accent: #5eead4;
+  --brand-soft: rgba(45, 212, 191, 0.1);
+
+  /* Status Adjustment (Lower saturation for dark mode) */
+  --status-red: #f87171;
+  --status-amber: #fbbf24;
+  --status-green: #4ade80;
+}
+
+html,
+body {
+  background-color: var(--color-app-bg);
+  overflow: hidden;
+  user-select: none;
+}
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--brand-primary);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-accent);
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-color: var(--brand-primary) var(--bg-main);
+  scrollbar-width: thin;
+}
+
+input,
+button {
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Hide Number Input Spinners */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* input[type="number"] {
+  -moz-appearance: textfield;
+} */
+
+/* Modernize Date Input Picker Icon */
+input::-webkit-calendar-picker-indicator {
+  opacity: 0.4;
+  cursor: pointer;
+  filter: invert(var(--calendar-invert)); /* Logic for dark mode */
+}

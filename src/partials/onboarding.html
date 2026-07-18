@@ -1,0 +1,144 @@
+<!-- onboarding, gathers initial information -->
+<div s-show="!$store.BudgetStore.isInitialized"
+    class="inset-0 z-200 flex items-center justify-center bg-app-bg/95 backdrop-blur-md p-6">
+
+    <div s-state="{onboardingPath: null, balance: 0, payday: null, amount: null }"
+        class="max-w-md w-full bg-app-card rounded-[40px] border border-app-border shadow-2xl p-8 transition-colors duration-300">
+
+        <div class="text-center mb-10">
+            <div
+                class="w-16 h-16 bg-brand-primary rounded-2xl flex items-center justify-center text-white text-3xl font-black mx-auto mb-4 shadow-lg shadow-brand-primary/20">
+                B
+            </div>
+            <h2 s-show="!onboardingPath" class="text-3xl font-black text-app-text tracking-tighter">Set your foundation.
+            </h2>
+            <p s-show="!onboardingPath" class="text-[11px] font-bold text-app-muted mt-2 uppercase tracking-wide">Choose
+                your path to start
+                tracking
+            </p>
+        </div>
+
+        <div s-show="!onboardingPath" class="space-y-3">
+            <button
+                s-class="onboardingPath === 'manual' ? 'border-brand-primary bg-brand-soft/50' : 'border-app-border bg-app-card hover:border-brand-primary/40' "
+                class="w-full p-5 rounded-3xl border-2 transition-all text-left flex items-center gap-4 group"
+                on:click="onboardingPath = 'manual'">
+                <div
+                    class="w-10 h-10 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-app-text group-hover:scale-110 transition-transform">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="flex justify-between items-center mb-0.5">
+                        <span class="font-black text-sm text-app-text">Manual Setup</span>
+                        <span
+                            class="px-2 py-0.5 rounded-lg bg-app-bg border border-app-border text-[8px] font-black uppercase text-app-muted">Free
+                            Forever</span>
+                    </div>
+                    <p class="text-[10px] text-app-muted leading-tight">Total privacy. You enter your data yourself.</p>
+                </div>
+            </button>
+
+            <div class="relative group cursor-not-allowed">
+                <div
+                    class="absolute -right-1 z-10 bg-brand-primary text-[8px] font-black text-white px-2 py-0.5 rounded-full rotate-12 shadow-md">
+                    COMING SOON</div>
+                <button disabled="true"
+                    class="disabled:opacity-60 w-full p-5 rounded-3xl border-2 border-app-border bg-app-bg/50 text-left flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-app-card flex items-center justify-center text-app-muted">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="font-black text-sm text-app-muted">Sync Bank Account</span>
+                        <p class="text-[10px] text-app-muted leading-tight">Connect Bank for auto-tracking & insights.
+                        </p>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- manual onboarding -->
+        <div s-show="onboardingPath === 'manual'"
+            class="border-t pt-8 border-app-border space-y-6 animate-in fade-in slide-in-from-bottom-4"
+            s-state="{ frequency: 'monthly' }">
+
+            <button on:click="onboardingPath = null"
+                class="group flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span class="text-[10px] font-black uppercase tracking-widest">Back</span>
+            </button>
+
+            <div>
+                <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] block mb-2 ml-1">Current
+                    Bank Balance</label>
+                <div class="relative group">
+                    <div
+                        class="absolute left-0 top-1/2 -translate-y-1/2 font-black text-xl text-app-muted/50 group-focus-within:text-brand-primary transition-colors">
+                        $</div>
+                    <input type="number" placeholder="0.00" on:input="balance = $target.value"
+                        class="w-full bg-transparent border-b-2 border-app-border focus:border-brand-primary py-4 pl-6 pr-0 font-black text-2xl text-app-text outline-none transition-all placeholder:text-app-muted/20">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] block mb-3 ml-1">Pay
+                    Frequency</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <template s-for="opt in ['weekly', 'bi-weekly', 'monthly']">
+                        <button on:click="frequency = opt"
+                            s-class="frequency === opt ? 'bg-brand-primary text-white border-brand-primary' : 'bg-app-bg/50 text-app-muted border-app-border/40'"
+                            class="py-2 rounded-xl border font-black text-[9px] uppercase tracking-tighter transition-all">
+                            <span s-text="opt"></span>
+                        </button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div>
+                    <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] ml-1">Next
+                        Payday</label>
+                    <input on:change="payday = $target.value" type="date"
+                        class="size-fit bg-app-bg/50 dark:bg-white/5 border border-app-border/40 rounded-xl py-3 px-4 font-bold text-xs text-app-text focus:border-brand-primary outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] ml-1">Deposit
+                        Amount</label>
+                    <div class="relative group">
+                        <span
+                            class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-app-muted/40">$</span>
+                        <input s-value="amount" on:input="amount = $target.value" type="number" placeholder="0.00"
+                            class="w-full bg-app-bg/50 dark:bg-white/5 border border-app-border/40 rounded-xl py-3 pl-7 pr-4 font-bold text-xs text-app-text focus:border-brand-primary outline-none transition-all placeholder:text-app-muted/20">
+                    </div>
+                </div>
+            </div>
+
+            <button
+                class="w-full py-5 mt-6 bg-app-text dark:bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                on:click="()=>{
+            if(!balance || !amount || !payday){
+                $store.ToastStore.add('Required: Balance, Payday, and Amount.','error');
+                return;
+            }
+            $store.BudgetStore.completeOnboarding({balance, amount, payday, frequency})
+        }">
+                Finalize Dashboard
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- this makes sure that this gets destroyed when onboarding phase is over. -->
+<template s-if="!$store.BudgetStore.isInitialized">
+    {{> toast }}
+</template>

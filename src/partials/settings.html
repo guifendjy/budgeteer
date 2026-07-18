@@ -1,0 +1,108 @@
+<div class="fixed inset-0 z-100">
+    <div on:click="settingsOpen = false" class="fixed inset-0 bg-slate-500/10 backdrop-blur-sm">
+    </div>
+
+    <aside
+        class="fixed top-0 left-0 h-full w-[85%] max-w-90 bg-app-card border-r border-app-border/40 shadow-[40px_0_80px_-20px_rgba(0,0,0,0.05)] flex flex-col rounded-r-4xl">
+
+        <div class="pt-16 px-10 pb-10 flex items-center justify-between">
+            <h2 class="text-2xl font-light text-app-text tracking-tight">Preferences</h2>
+
+            <button on:click="settingsOpen = false"
+                class="p-2 hover:bg-app-border/10 rounded-full transition-colors text-app-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-10 space-y-12">
+
+            <section>
+                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-4">Secure Identity</h3>
+                <div class="flex items-center gap-4 py-3 border-b border-app-border/10">
+                    <div
+                        class="w-10 h-10 rounded-full bg-brand-primary/5 flex items-center justify-center text-brand-primary">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-app-text">Local Protection</p>
+                        <p class="text-[10px] text-app-muted">Your data never leaves this device.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="space-y-6">
+                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest">Display</h3>
+
+                <div class="flex items-center justify-between group">
+                    <span class="text-xs font-medium text-app-text">Regional Currency</span>
+                    <select s-value="$store.UserStore.settings.currency"
+                        on:change="$store.UserStore.updateSettings({currency: $target.value})"
+                        class="bg-transparent outline-none border-none text-xs font-bold text-brand-primary cursor-pointer focus:ring-0">
+                        <option>USD</option>
+                        <option>EUR </option>
+                        <option>GBP </option>
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium text-app-text">Appearance</span>
+                    <div class="flex items-center gap-1 bg-app-border/10 p-1 rounded-full">
+                        <button on:click="$store.UserStore.updateSettings({theme: 'light'})"
+                            s-class="$store.UserStore.settings.theme === 'light' ? 'bg-brand-primary/10' : 'text-brand-primary' "
+                            class="p-2 rounded-full transition-all text-app-muted
+                                  ">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </button>
+                        <button on:click="$store.UserStore.updateSettings({theme: 'dark'})"
+                            s-class="$store.UserStore.settings.theme === 'dark' ? 'bg-brand-primary/10' : 'text-brand-primary' "
+                            class="p-2 rounded-full transition-all text-app-muted
+                                   ">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="pt-8">
+                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-4">Privacy</h3>
+                <div s-state="{showModal: false}"
+                    class="bg-slate-50/50 dark:bg-white/5 border border-app-border/20 rounded-2xl p-5">
+                    <p class="text-[10px] text-app-muted leading-relaxed mb-4">Resetting will remove all locally stored
+                        budget information and financial history.</p>
+                    <button on:click="showModal=true" class=" text-[10px] font-black text-status-overdue uppercase tracking-widest hover:underline
+                        transition-all">
+                        Delete Data & Reset
+                    </button>
+
+                    <template s-if="showModal">
+                        {{> confirm-modal
+                        title="Permanently Purge Data?"
+                        content="This will erase all of your data and settings. Are you absolutely sure you want to
+                        proceed?"
+                        confirm="()=>{
+                            $store.UserStore.purgeAllData();
+                            showModal=false;
+                        }"
+                        cancel="showModal=false"
+                        }}
+                    </template>
+                </div>
+            </section>
+        </div>
+
+        <div class="p-10 border-t border-app-border/10">
+            <p class="text-[10px] text-app-muted text-center italic font-serif">Architected for Financial Clarity</p>
+        </div>
+    </aside>
+</div>
