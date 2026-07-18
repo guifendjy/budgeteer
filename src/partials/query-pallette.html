@@ -1,6 +1,6 @@
 <!-- query pallette -->
 <div s-show="isExpanded"
-    class="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mx-auto mt-2 max-w-xl bg-app-card border border-app-border rounded-2xl shadow-xl z-40 overflow-hidden transition-all"
+    class="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mx-auto mt-2 max-w-xl bg-app-card border border-app-border rounded-2xl shadow-xl z-40 overflow-hidden transition-all">
     <!-- add bill action-->
     <div s-show="query.length > 0" class="expanded-container p-2 border-b border-app-border bg-brand-soft/30">
         <div on:click="()=>{
@@ -15,41 +15,38 @@
         }"
             class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3 rounded-xl hover:bg-brand-soft cursor-pointer transition-colors border border-transparent hover:border-brand-accent/20">
 
-            <div class="flex items-start gap-3 w-full min-w-0">
-                <div
-                    class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center font-bold shrink-0">
-                    +
-                </div>
+            <div
+                class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3 rounded-xl bg-brand-soft cursor-pointer transition-colors border border-brand-accent/20">
 
-                <div class="min-w-0 flex-1 space-y-1">
-                    <p class="text-xs font-bold text-brand-primary">Create New Bill</p>
+                <div class="flex items-start gap-3 w-full min-w-0">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center font-bold shrink-0">
+                        +
+                    </div>
 
-                    <p s-class="!parseBillQuery(query)?.valid ? 'text-status-danger' : 'text-app-muted'"
-                        class="text-[11px] min-w-0 flex flex-wrap gap-x-2 gap-y-0.5 leading-relaxed">
-                        <span class="inline-block">Parsing: <span class="font-semibold text-app-text"
-                                s-text="parseBillQuery(query).name"></span></span>
-                        <span class="inline-block">for <span class="font-semibold text-app-text"
-                                s-text="$store.HelpersStore.$formatCurrency(parseBillQuery(query).amount, $store.UserStore.settings.currency)"></span></span>
-                        <span class="inline-block">due <span class="font-semibold text-app-text"
-                                s-text="$store.HelpersStore.$formatDate(parseBillQuery(query).due_date, {relative: false})"></span></span>
-                        <span
-                            class="inline-block text-[10px] uppercase tracking-wide bg-app-border/30 px-1 rounded font-bold"
-                            s-text="parseBillQuery(query).recurrence"></span>
-                    </p>
+                    <div class="min-w-0 flex-1 space-y-1">
+                        <p class="text-xs font-bold text-brand-primary">Create New Bill</p>
 
-                    <template s-for="missing in parseBillQuery(query).missing">
-                        <p class="text-[10px] text-status-danger/80 pt-0.5">
-                            Missing: <span class="capitalize" s-text="missing"></span>
+                        <p s-class="!parseBillQuery(query)?.valid ? 'text-status-danger' : 'text-app-muted'"
+                            class="text-[11px] min-w-0 flex flex-wrap gap-x-2 gap-y-0.5 leading-relaxed">
+                            <span class="inline-block">Parsing: <span class="font-semibold text-app-text"
+                                    s-text="parseBillQuery(query).name"></span></span>
+                            <span class="inline-block">for <span class="font-semibold text-app-text"
+                                    s-text="$store.HelpersStore.$formatCurrency(parseBillQuery(query).amount, $store.UserStore.settings.currency)"></span></span>
+                            <span class="inline-block">due <span class="font-semibold text-app-text"
+                                    s-text="$store.HelpersStore.$formatDate(parseBillQuery(query).due_date, {relative: false})"></span></span>
+                            <span
+                                class="inline-block text-[10px] uppercase tracking-wide bg-app-border/30 px-1 rounded font-bold"
+                                s-text="parseBillQuery(query).recurrence"></span>
                         </p>
-                    </template>
-                </div>
-            </div>
 
-            <div class="flex justify-end items-center border-t border-app-border/10 sm:border-0 pt-2 sm:pt-0 shrink-0">
-                <span
-                    class="text-[10px] font-bold text-app-muted uppercase tracking-wider bg-app-border/20 sm:bg-transparent px-2 py-0.5 sm:p-0 rounded">
-                    Press Enter ↵
-                </span>
+                        <template s-for="missing in parseBillQuery(query).missing">
+                            <p class="text-[10px] text-status-danger/80 pt-0.5">
+                                Missing: <span class="capitalize" s-text="missing"></span>
+                            </p>
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

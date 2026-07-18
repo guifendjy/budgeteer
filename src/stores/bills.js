@@ -12,8 +12,12 @@ export default function () {
       bill = { ...bill, owner_id: this.$store.UserStore.id }; // apply owner id here
       this.bills = [...this.bills, bill];
 
-      if (this.$store.UserStore.id)
-        PersistenceService.save("bills", bill, this.$store.UserStore.tier);
+      if (this.$store.UserStore.id) {
+        const { valid, missing, selected, ...rest } = bill;
+
+        // remove the selected property before saving to persistence
+        PersistenceService.save("bills", rest, this.$store.UserStore.tier);
+      }
 
       // trigger change in the budget
       this.$store.BudgetStore.updateBudget();
@@ -98,8 +102,7 @@ export default function () {
             return {
               ...bill,
               due_date: dueDate.toISOString(),
-              status:
-                isOverdue ? "overdue" : bill.status || "pending",
+              status: isOverdue ? "overdue" : bill.status || "pending",
             };
           }
           return bill;
