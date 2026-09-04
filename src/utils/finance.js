@@ -94,16 +94,12 @@ const parseBillQuery = (query) => {
     due_date: dueDate.toISOString(),
     recurrence,
     status: "pending",
-    priority: "mandatory",
     created_at: moment().toISOString(),
     updated_at: null,
     version: 1,
     metadata: {
       category,
-      shared_with: [],
-      notes: null,
-      is_business_expense: false,
-      custom_fields: {},
+      is_tax_deductible: true,
     },
   };
 };

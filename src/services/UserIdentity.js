@@ -15,7 +15,6 @@ export const UserIdentityService = {
         // Generate a fresh local identity
         user = {
           id: `user_local_${uniId()}`,
-          tier: "free", // Defaults to Free
           settings: {
             currency: "USD",
             theme: "dark",

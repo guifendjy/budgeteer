@@ -28,7 +28,11 @@ export default function () {
         return;
       }
       const bill = this.bills.find((b) => b.id === billId);
-      if (!bill) return;
+      if (!bill){
+        this.$store.ToastStore.add("Bill not found", "error");
+         return;
+      }
+      
 
       const getPaidBill = (bill) => {
         const now = moment();

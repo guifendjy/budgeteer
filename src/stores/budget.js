@@ -14,7 +14,6 @@ const MULTIPLIERS = {
 export default function () {
   // we can use services here to grab data
   // from indexDb or cloud depending
-  // on which tier the user is currently on.
 
   return {
     cleared_balance: 0, // to test it, but default should be 0.
@@ -66,7 +65,7 @@ export default function () {
         );
       }
     },
-    completeOnboarding(data, tier = "free") {
+    completeOnboarding(data) {
       if (!validateDate(data.payday)) {
         this.$store.ToastStore.add(
           "next deposit date must be today or later",
@@ -75,19 +74,16 @@ export default function () {
         return;
       }
 
-      this._setupUserProfile(data, tier);
-      // else if (tier == "pro") this._setupPremiumTier(data); // for future expansion
+      this._setupUserProfile(data);
 
       this.isInitialized = true;
     },
-    async _setupUserProfile(data, tier) {
-      if (tier == "free") {
+    async _setupUserProfile(data) {
         this.cleared_balance = parseFloat(data.balance) || 0;
         this.next_deposit_date = data.payday;
         this.next_deposit_amount = parseFloat(data.amount || 0);
         this.pay_frequency = data.frequency;
 
-        // create free tier user
         const userProfile = await UserIdentityService.CreateLocalUser();
 
         PersistenceService.save(
@@ -99,12 +95,10 @@ export default function () {
             next_deposit_amount: this.next_deposit_amount,
             pay_frequency: this.pay_frequency,
           },
-          userProfile.tier,
         );
 
         // set user id, that will be used througout the app to save bills and trigger updates and other changes.
         this.$store.UserStore.id = userProfile.id;
-      }
 
       // calculate safe-to-spend and total-obligations
       this.updateBudget();

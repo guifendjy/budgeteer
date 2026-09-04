@@ -1,29 +1,14 @@
 <!-- metadata fields -->
 <div class="mt-6">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-3 border-b border-app-border pb-1">
-        <span class="text-xs font-semibold uppercase tracking-wide text-app-muted">
-            Custom Metadata
-        </span>
-
-        <!-- custom metadata fields count -->
-        <span class="text-[11px] px-2 py-0.5 rounded-full
-                 bg-app-bg border border-app-border
-                 text-app-muted">
-            <!-- custom fields count -->
-            <span s-text="Object.keys($store.SelectedBillStore.bill.metadata.custom_fields).length"></span>
-            fields
-        </span>
-    </div>
-
-
     <!-- Fields -->
     <div class="space-y-3">
         <!-- Tax Deductible -->
         <div class="flex items-center justify-between
                 py-2 px-2 rounded-lg
-                hover:bg-app-bg transition">
+                hover:bg-app-bg transition"
+                on:click="$store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'metadata', { ...$store.SelectedBillStore.selectedBill?.metadata, is_tax_deductible: !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible })"
+                  >
 
             <!-- metadata key-->
             <span class="flex items-center gap-2 text-sm">
@@ -37,79 +22,31 @@
 
             <!-- metadata value -->
             <div class="flex items-center gap-2">
-                <span class="text-[11px] font-mono text-brand-primary">
-                    On
-                </span>
-
-                <!-- toggle -->
-                <div class="w-8 h-4 rounded-full bg-brand-primary/20 relative">
-                    <div class="absolute top-0.5 right-0.5
-                      w-3 h-3 rounded-full
-                      bg-brand-primary"></div>
-                </div>
-            </div>
-
-        </div>
-        <!-- Business Expense -->
-        <div class="flex items-center justify-between
-                py-2 px-2 rounded-lg
-                hover:bg-app-bg transition">
-
-            <span class="flex items-center gap-2 text-sm">
-                <svg class="w-3.5 h-3.5 text-app-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2">
-                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
-                    <line x1="7" y1="7" x2="7.01" y2="7" />
-                </svg>
-                Business Expense
-            </span>
-
-            <div class="flex items-center gap-2">
-                <span s-class="{'text-brand-primary': $store.SelectedBillStore.bill.metadata.is_business_expense}"
-                    s-text="$store.SelectedBillStore.bill.metadata.is_business_expense ? 'On' :'Off' "
-                    class="text-[11px] font-mono text-app-muted">
+                <span 
+                s-class="{'text-brand-primary': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible}"
+                    s-text="$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible ? 'On' :'Off' "
+                class="text-[11px] font-mono">
                     Off
                 </span>
 
                 <!-- toggle -->
-                <div s-class="{'bg-brand-primary/20': $store.SelectedBillStore.bill.metadata.is_business_expense}"
-                    class="w-8 h-4 rounded-full bg-app-border relative">
-                    <div s-class="{
-                                'left-0.5': !$store.SelectedBillStore.bill.metadata.is_business_expense,
-                                'right-0.5': $store.SelectedBillStore.bill.metadata.is_business_expense,
-                                'bg-brand-primary': $store.SelectedBillStore.bill.metadata.is_business_expense
-                            }" class="absolute top-0.5 left-0.5
+                <div 
+                s-class="{
+                    'bg-brand-primary/45': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                    'bg-app-muted': !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible
+                }"
+                class="w-8 h-4 rounded-full relative">
+                    <div 
+                   s-class="{
+                                'left-0.5': !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                                'right-0.5': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                                'bg-brand-primary': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible
+                            }" class="absolute top-0.5
                       w-3 h-3 rounded-full
                       bg-app-card border border-app-border"></div>
                 </div>
             </div>
 
         </div>
-    </div>
-
-
-    <!-- paid tier still add fields -->
-    <div class="mt-2 border-t border-app-border pt-2">
-        <button class="w-full flex items-center justify-between
-           rounded-lg border border-dashed border-app-border
-           bg-app-bg/60
-           px-3 py-2
-           text-left
-           hover:bg-app-bg
-           transition-colors">
-
-            <span class="flex items-center gap-2 text-xs text-app-muted">
-                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Add custom field
-            </span>
-
-            <span class="text-[10px] text-app-muted font-mono">
-                +
-            </span>
-        </button>
     </div>
 </div>

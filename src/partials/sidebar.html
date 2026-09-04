@@ -16,7 +16,7 @@
             }));
             $store.OpenPanelStore.setPanel(null);
 
-        }" s-class="bill.selected ? 'bg-brand-primary/5 border-brand-primary' : 'border-app-border' " class="border border-app-border bg-app-card  hover:bg-app-bg dark:bg-app-bg dark:hover:bg-app-bg/70
+        }" s-class="$store.SelectedBillStore.selectedBill?.id === bill.id ? 'bg-brand-primary/5 border-brand-primary' : 'border-app-border' " class="border border-app-border bg-app-card  hover:bg-app-bg dark:bg-app-bg dark:hover:bg-app-bg/70
          rounded-xl px-3 py-2.5
           transition-transform duration-150
          cursor-pointer">

@@ -4,13 +4,12 @@ export default function () {
   return {
     id: null, // no id means no user yet.
     // accountName: null, will eventually ask for a name???
-    tier: "free", // possible values: 'free', 'pro'
     settings: {
       currency: "USD",
       theme: "dark",
       // more settings...
     },
-    created_at: null,
+    created_at: Date.now(),
     async updateSettings(newSettings) {
       try {
         if (newSettings.theme) {
@@ -42,9 +41,8 @@ export default function () {
         const user = await UserIdentityService.exists();
 
         if (!user) return;
-        const { created_at, id, tier, settings } = user;
+        const { created_at, id, settings } = user;
         this.id = id;
-        this.tier = tier;
         this.settings = settings;
         this.created_at = created_at;
 
