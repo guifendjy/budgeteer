@@ -1,3 +1,4 @@
+<!-- use local storage to persist notifications -->
 <div class="fixed inset-0 z-100">
     <div on:click="notificationsOpen = false" class="fixed inset-0 bg-slate-500/10 backdrop-blur-sm">
     </div>
@@ -17,43 +18,31 @@
         <div class="flex-1 overflow-y-auto px-6 space-y-3">
 
             <!-- list of all notifications(from notif store) -->
-            <div
-                class="group relative p-5 bg-status-overdue/5 border border-status-overdue/10 rounded-3xl hover:bg-status-overdue/10 transition-all cursor-pointer">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[8px] font-black text-status-overdue uppercase tracking-widest">Urgent</span>
-                    <span class="text-[8px] font-mono text-app-muted uppercase">2h ago</span>
-                </div>
-                <p class="text-xs font-bold text-app-text mb-1">Missed Obligation</p>
-                <p class="text-[10px] text-app-muted leading-relaxed">Your "Rent" bill was marked as due today but no
-                    cleared balance change was detected.</p>
-            </div>
 
             <div
                 class="group relative p-5 bg-app-bg/40 border border-app-border/20 rounded-3xl hover:border-brand-primary/30 transition-all cursor-pointer">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[8px] font-black text-brand-primary uppercase tracking-widest">Update</span>
-                    <span class="text-[8px] font-mono text-app-muted uppercase">Yesterday</span>
+                <div class="flex items-start gap-4">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-3">
+                            <!-- title -->
+                            <p class="text-xs font-bold text-app-text">Safe-to-Spend Trend</p>
+                            <!-- date -->
+                            <span class="shrink-0 text-[8px] font-mono text-app-muted uppercase">May 09</span>
+                        </div>
+                        <!-- message -->
+                        <p class="mt-2 text-[10px] text-app-muted leading-relaxed">Your daily spending has averaged 15% lower this week. Your weekend forecast is healthy.</p>
+                    </div>
+                    <button type="button" aria-label="Remove notification"
+                        class="shrink-0 text-[9px] font-black text-app-muted hover:text-red-500 uppercase tracking-wider transition-colors">
+                        Remove
+                    </button>
                 </div>
-                <p class="text-xs font-bold text-app-text mb-1">Database Optimization</p>
-                <p class="text-[10px] text-app-muted leading-relaxed">Local IndexedDB was successfully pruned. 1.2MB of
-                    stale cache removed.</p>
-            </div>
-
-            <div
-                class="group relative p-5 bg-app-bg/40 border border-app-border/20 rounded-3xl hover:border-brand-primary/30 transition-all cursor-pointer">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[8px] font-black text-app-muted uppercase tracking-widest">Insight</span>
-                    <span class="text-[8px] font-mono text-app-muted uppercase">May 09</span>
-                </div>
-                <p class="text-xs font-bold text-app-text mb-1">Safe-to-Spend Trend</p>
-                <p class="text-[10px] text-app-muted leading-relaxed">Your daily spending has averaged 15% lower this
-                    week.
-                    Your weekend forecast is healthy.</p>
             </div>
 
         </div>
 
         <div class="p-8 border-t border-app-border/10">
+            <!-- clear all notifications button -->
             <button
                 class="w-full py-3 text-[9px] font-black text-app-muted hover:text-brand-primary uppercase tracking-[0.3em] transition-colors">
                 Clear All Notifications

@@ -13,9 +13,8 @@ export default function () {
       this.bills = [...this.bills, bill];
 
       if (this.$store.UserStore.id) {
+        // remove the selected property before saving to persistence. "crucial" to avoid saving the selected bill in the persistence layer.
         const { valid, missing, selected, ...rest } = bill;
-
-        // remove the selected property before saving to persistence
         PersistenceService.save("bills", rest, this.$store.UserStore.tier);
       }
 

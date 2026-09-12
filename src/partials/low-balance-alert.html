@@ -1,6 +1,6 @@
 <template s-if="$store.BudgetStore.low_balance_alert">
     <div class="pt-5 mt-5 border-t border-app-border/30">
-        <div class="flex gap-4 p-4 bg-status-overdue/5 border border-status-overdue/20 rounded-2xl items-start">
+        <div class="relative flex items-start gap-3 p-4 pr-12 sm:gap-4 sm:pr-12 bg-status-overdue/5 border border-status-overdue/20 rounded-2xl">
 
             <div class="hidden sm:flex shrink-0 w-8 h-8 rounded-full bg-status-overdue/10 items-center justify-center">
                 <svg class="w-4 h-4 text-status-overdue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,7 +9,7 @@
                 </svg>
             </div>
 
-            <div class="space-y-1 min-w-0 flex-1">
+            <div class="min-w-0 flex-1 space-y-1">
                 <p class="text-xs sm:text-sm font-black text-status-overdue uppercase tracking-tight">
                     Low Balance Alert — Projected <span
                         s-text="$store.BudgetStore.low_balance_alert?.projectedDate"></span>
@@ -28,6 +28,16 @@
                         s-text="$store.BudgetStore.low_balance_alert?.triggerDate"></span>.
                 </p>
             </div>
+
+            <button
+                on:click="$store.BudgetStore.clearLowBalanceAlert()"
+                type="button"
+                class="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-status-overdue/30 bg-app-bg/60 text-xs font-bold text-status-overdue transition hover:bg-status-overdue/10"
+                aria-label="Clear low balance alert"
+                @click="$store.BudgetStore.low_balance_alert = null"
+            >
+                ×
+            </button>
         </div>
     </div>
 </template>

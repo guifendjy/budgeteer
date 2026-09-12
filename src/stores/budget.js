@@ -65,6 +65,9 @@ export default function () {
         );
       }
     },
+    clearLowBalanceAlert() {
+      this.low_balance_alert = null;
+    },
     completeOnboarding(data) {
       if (!validateDate(data.payday)) {
         this.$store.ToastStore.add(
