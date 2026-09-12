@@ -1,0 +1,1608 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<!-- Possible lang options: en (English), fr (French), es (Spanish), de (German), it (Italian), pt (Portuguese), ru (Russian), ja (Japanese), zh (Chinese), ar (Arabic), hi (Hindi) -->
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/assets/icons/icon.png" sizes="32x32">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Budgeteer</title>
+  <link rel="manifest" href="/manifest.json">
+  <script type="module" crossorigin src="/assets/index-h-riMpIf.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CRT4CZkp.css">
+</head>
+
+<!-- empty s-state here allows the engine to start gathering directives from the root, since app is modular -->
+
+<body s-state>
+  <!-- loading screen => theme won't apply to pre-loader untill css files loads -->
+  <div id="pre-loader" s-effect="()=>{
+    const el = $target;
+    setTimeout(()=> el.remove(), 1000);
+  }">
+
+
+    <style>@keyframes logo-pulse{0%,to{filter:drop-shadow(0 0 #0d4d4d00);transform:scale(1)}50%{filter:drop-shadow(0 0 20px #0d4d4d33);transform:scale(1.05)}}#pre-loader{z-index:9999;color:#f8fafc;background:#020617;flex-direction:column;justify-content:center;align-items:center;transition:opacity .4s ease-out;display:flex;position:fixed;inset:0}#pre-loader .loader-content{flex-direction:column;align-items:center;animation:2s ease-in-out infinite logo-pulse;display:flex}#pre-loader .loader-icon{color:#fff;background:#2dd4bf;border-radius:10px;justify-content:center;align-items:center;width:80px;height:80px;font-family:sans-serif;font-size:48px;font-weight:900;display:flex;box-shadow:0 20px 25px -5px #0000001a}#pre-loader .loader-text{color:#dce0e7;letter-spacing:-.05em;margin-top:10px;font-family:sans-serif;font-size:32px;font-weight:900}#pre-loader .loader-dot{color:#0d4d4d}</style>
+
+    <div class="loader-content">
+      <div class="loader-icon">B</div>
+      <h1 class="loader-text">Budgeteer<span class="loader-dot">.</span></h1>
+    </div>
+  </div>
+  <!-- onboarding, gathers initial information -->
+  <div s-show="!$store.BudgetStore.isInitialized"
+      class="inset-0 z-200 flex items-center justify-center bg-app-bg/95 backdrop-blur-md p-6">
+  
+      <div s-state="{onboardingPath: null, balance: 0, payday: null, amount: null }"
+          class="max-w-md w-full bg-app-card rounded-[40px] border border-app-border shadow-2xl p-8 transition-colors duration-300">
+  
+          <div class="text-center mb-10">
+              <div
+                  class="w-16 h-16 bg-brand-primary rounded-2xl flex items-center justify-center text-white text-3xl font-black mx-auto mb-4 shadow-lg shadow-brand-primary/20">
+                  B
+              </div>
+              <h2 s-show="!onboardingPath" class="text-3xl font-black text-app-text tracking-tighter">Set your foundation.
+              </h2>
+              <p s-show="!onboardingPath" class="text-[11px] font-bold text-app-muted mt-2 uppercase tracking-wide">Choose
+                  your path to start
+                  tracking
+              </p>
+          </div>
+  
+          <div s-show="!onboardingPath" class="space-y-3">
+              <button
+                  s-class="onboardingPath === 'manual' ? 'border-brand-primary bg-brand-soft/50' : 'border-app-border bg-app-card hover:border-brand-primary/40' "
+                  class="w-full p-5 rounded-3xl border-2 transition-all text-left flex items-center gap-4 group"
+                  on:click="onboardingPath = 'manual'">
+                  <div
+                      class="w-10 h-10 rounded-full bg-app-bg border border-app-border flex items-center justify-center text-app-text group-hover:scale-110 transition-transform">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                  </div>
+                  <div class="flex-1">
+                      <div class="flex justify-between items-center mb-0.5">
+                          <span class="font-black text-sm text-app-text">Manual Setup</span>
+                          <span
+                              class="px-2 py-0.5 rounded-lg bg-app-bg border border-app-border text-[8px] font-black uppercase text-app-muted">Free
+                              Forever</span>
+                      </div>
+                      <p class="text-[10px] text-app-muted leading-tight">Total privacy. You enter your data yourself.</p>
+                  </div>
+              </button>
+  
+              <div class="relative group cursor-not-allowed">
+                  <div
+                      class="absolute -right-1 z-10 bg-brand-primary text-[8px] font-black text-white px-2 py-0.5 rounded-full rotate-12 shadow-md">
+                      COMING SOON</div>
+                  <button disabled="true"
+                      class="disabled:opacity-60 w-full p-5 rounded-3xl border-2 border-app-border bg-app-bg/50 text-left flex items-center gap-4">
+                      <div class="w-10 h-10 rounded-full bg-app-card flex items-center justify-center text-app-muted">
+                          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z" />
+                          </svg>
+                      </div>
+                      <div>
+                          <span class="font-black text-sm text-app-muted">Sync Bank Account</span>
+                          <p class="text-[10px] text-app-muted leading-tight">Connect Bank for auto-tracking & insights.
+                          </p>
+                      </div>
+                  </button>
+              </div>
+          </div>
+  
+          <!-- manual onboarding -->
+          <div s-show="onboardingPath === 'manual'"
+              class="border-t pt-8 border-app-border space-y-6 animate-in fade-in slide-in-from-bottom-4"
+              s-state="{ frequency: 'monthly' }">
+  
+              <button on:click="onboardingPath = null"
+                  class="group flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-1 transition-transform"
+                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span class="text-[10px] font-black uppercase tracking-widest">Back</span>
+              </button>
+  
+              <div>
+                  <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] block mb-2 ml-1">Current
+                      Bank Balance</label>
+                  <div class="relative group">
+                      <div
+                          class="absolute left-0 top-1/2 -translate-y-1/2 font-black text-xl text-app-muted/50 group-focus-within:text-brand-primary transition-colors">
+                          $</div>
+                      <input type="number" placeholder="0.00" on:input="balance = $target.value"
+                          class="w-full bg-transparent border-b-2 border-app-border focus:border-brand-primary py-4 pl-6 pr-0 font-black text-2xl text-app-text outline-none transition-all placeholder:text-app-muted/20">
+                  </div>
+              </div>
+  
+              <div>
+                  <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] block mb-3 ml-1">Pay
+                      Frequency</label>
+                  <div class="grid grid-cols-3 gap-2">
+                      <template s-for="opt in ['weekly', 'bi-weekly', 'monthly']">
+                          <button on:click="frequency = opt"
+                              s-class="frequency === opt ? 'bg-brand-primary text-white border-brand-primary' : 'bg-app-bg/50 text-app-muted border-app-border/40'"
+                              class="py-2 rounded-xl border font-black text-[9px] uppercase tracking-tighter transition-all">
+                              <span s-text="opt"></span>
+                          </button>
+                      </template>
+                  </div>
+              </div>
+  
+              <div class="flex">
+                  <div>
+                      <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] ml-1">Next
+                          Payday</label>
+                      <input on:change="payday = $target.value" type="date"
+                          class="size-fit bg-app-bg/50 dark:bg-white/5 border border-app-border/40 rounded-xl py-3 px-4 font-bold text-xs text-app-text focus:border-brand-primary outline-none transition-all">
+                  </div>
+  
+                  <div>
+                      <label class="text-[10px] font-black text-app-muted uppercase tracking-[0.2em] ml-1">Deposit
+                          Amount</label>
+                      <div class="relative group">
+                          <span
+                              class="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-app-muted/40">$</span>
+                          <input s-value="amount" on:input="amount = $target.value" type="number" placeholder="0.00"
+                              class="w-full bg-app-bg/50 dark:bg-white/5 border border-app-border/40 rounded-xl py-3 pl-7 pr-4 font-bold text-xs text-app-text focus:border-brand-primary outline-none transition-all placeholder:text-app-muted/20">
+                      </div>
+                  </div>
+              </div>
+  
+              <button
+                  class="w-full py-5 mt-6 bg-app-text dark:bg-brand-primary text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg hover:shadow-brand-primary/20 hover:-translate-y-0.5 active:translate-y-0 transition-all"
+                  on:click="()=>{
+              if(!balance || !amount || !payday){
+                  $store.ToastStore.add('Required: Balance, Payday, and Amount.','error');
+                  return;
+              }
+              $store.BudgetStore.completeOnboarding({balance, amount, payday, frequency})
+          }">
+                  Finalize Dashboard
+              </button>
+          </div>
+      </div>
+  </div>
+  
+  
+  <!-- this makes sure that this gets destroyed when onboarding phase is over. -->
+  <template s-if="!$store.BudgetStore.isInitialized">
+      <div class="fixed bottom-6 right-6 z-100 flex flex-col gap-3 pointer-events-none">
+          <template s-for="toast in $store.ToastStore.toasts">
+              <div class="pointer-events-auto flex items-center w-full max-w-sm p-4 bg-app-card border border-brand-accent rounded-2xl shadow-xl animate-in slide-in-from-right-5 fade-in duration-300"
+                  role="alert" s-key="toast.id">
+      
+                  <div
+                      class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-brand-primary bg-brand-soft rounded-lg">
+                      <svg s-show="toast.type === 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <svg s-show="toast.type !== 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0114 0z" />
+                      </svg>
+                  </div>
+      
+                  <div class="mx-4 text-sm font-bold text-app-text tracking-tight" s-text="toast.message"></div>
+      
+                  <button on:click="$store.ToastStore.remove(toast.id)" type="button"
+                      class="ms-auto flex items-center justify-center text-app-muted hover:text-app-text hover:bg-app-bg rounded-lg w-8 h-8 transition-colors">
+                      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                  </button>
+              </div>
+          </template>
+      </div></template>  <div s-show="$store.BudgetStore.isInitialized" id="app" class="h-screen overflow-hidden
+            bg-app-bg text-app-text
+            font-sans antialiased text-[14px]
+            flex flex-col">
+
+    <!-- header -->
+    <header s-state="HeaderState"  class="sticky top-0 z-50 flex items-center justify-between px-6 py-3 bg-app-card border-b border-app-border">
+        <div class="flex items-center gap-2 shrink-0">
+            <div
+                class="w-8 h-8 bg-brand-primary rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-brand-primary/20">
+                B</div>
+            <span class="hidden lg:inline font-bold text-lg tracking-tight text-app-text">Budgeteer.</span>
+        </div>
+    
+        <div class="flex-1 max-w-md mx-8 relative">
+            <!-- query field -->
+            <div class="relative group z-50">
+                <input s-ref="queryInput" on:focus="isExpanded = true" s-value="query" type="text" on:input="query = $target.value"
+                    placeholder="Search bills or add 'Name Amount Date Recurrence'..." class="w-full pl-10 pr-4 py-2 bg-app-bg border border-app-border rounded-xl text-xs font-mono tracking-tight
+                           focus:ring-4 focus:ring-brand-primary/5 focus:border-app-border-hover 
+                           outline-none transition-all">
+            
+                <span class="absolute left-3 top-2.5 text-app-muted">
+                    <template s-if="query.match(/\d+/)">
+                        <svg class="w-4 h-4 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </template>
+                    <template s-if="!query.match(/\d+/)">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                    </template>
+                </span>
+            </div>        <div s-show="isExpanded" on:click="isExpanded = false" class="fixed inset-0 z-30"></div>
+        </div>
+    
+        <!-- query pallette -->
+        <div s-show="isExpanded"
+            class="absolute top-full left-2 right-2 sm:left-0 sm:right-0 mx-auto mt-2 max-w-xl bg-app-card border border-app-border rounded-2xl shadow-xl z-40 overflow-hidden transition-all">
+            <!-- add bill action-->
+            <div s-show="query.length > 0" class="expanded-container p-2 border-b border-app-border bg-brand-soft/30">
+                <div on:click="()=>{
+                const bill = parseBillQuery(query);
+                if(!bill.valid) {
+                    $store.ToastStore.add('Invalid bill query', 'error');
+                    return;
+                }
+                $store.BillStore.add(bill);
+                $store.ToastStore.add('bill added');
+                query = ''; // clear the query input.
+                }"
+                    class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3 rounded-xl hover:bg-brand-soft cursor-pointer transition-colors border border-transparent hover:border-brand-accent/20">
+        
+                    <div
+                        class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-3 rounded-xl bg-brand-soft cursor-pointer transition-colors border border-brand-accent/20">
+        
+                        <div class="flex items-start gap-3 w-full min-w-0">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-brand-primary text-white flex items-center justify-center font-bold shrink-0">
+                                +
+                            </div>
+        
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <p class="text-xs font-bold text-brand-primary">Create New Bill</p>
+        
+                                <p s-class="!parseBillQuery(query)?.valid ? 'text-status-danger' : 'text-app-muted'"
+                                    class="text-[11px] min-w-0 flex flex-wrap gap-x-2 gap-y-0.5 leading-relaxed">
+                                    <span class="inline-block">Parsing: <span class="font-semibold text-app-text"
+                                            s-text="parseBillQuery(query).name"></span></span>
+                                    <span class="inline-block">for <span class="font-semibold text-app-text"
+                                            s-text="$store.HelpersStore.$formatCurrency(parseBillQuery(query).amount, $store.UserStore.settings.currency)"></span></span>
+                                    <span class="inline-block">due <span class="font-semibold text-app-text"
+                                            s-text="$store.HelpersStore.$formatDate(parseBillQuery(query).due_date, {relative: false})"></span></span>
+                                    <span
+                                        class="inline-block text-[10px] uppercase tracking-wide bg-app-border/30 px-1 rounded font-bold"
+                                        s-text="parseBillQuery(query).recurrence"></span>
+                                </p>
+        
+                                <template s-for="missing in parseBillQuery(query).missing">
+                                    <p class="text-[10px] text-status-danger/80 pt-0.5">
+                                        Missing: <span class="capitalize" s-text="missing"></span>
+                                    </p>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        
+            <!-- query quick actions -->
+            <div s-show="query.length === 0" class="p-4 space-y-3">
+                <div class="rounded-lg border border-app-border bg-app-bg/50 p-2.5 flex items-center gap-2">
+                    <svg width="10" class="w-3.5 h-3.5 text-app-muted shrink-0" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="16" x2="12" y2="12" />
+                        <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+        
+                    <p class="text-[11px] text-app-muted">
+                        name · amount · due date · recurrence <i>(default: monthly)</i><br>
+                        <b>try:</b> <span class="text-brand-primary font-mono">"Netflix 17.99 29th monthly"</span> or <span
+                            class="text-brand-primary font-mono">"Rent 1200 1st"</span>
+                    </p>
+                </div>
+                <p class="text-[10px] font-bold text-app-muted uppercase tracking-widest">Quick Commands</p>
+                <div class="grid grid-cols-1 gap-2">
+                    <button on:click="query = 'Electric 85' "
+                        class="text-left p-2 rounded-lg hover:bg-app-bg text-xs border border-transparent hover:border-app-border transition-all">
+                        <span class="text-brand-primary font-mono">"Electric 85"</span>
+                        <span class="text-app-muted"> — Add <span
+                                s-text="$store.HelpersStore.$formatCurrency(85, $store.UserStore.settings.currency)"></span>
+                            electric bill</span>
+                    </button>
+                    <button on:click="query = 'Rent 1200 1st'"
+                        class="text-left p-2 rounded-lg hover:bg-app-bg text-xs border border-transparent hover:border-app-border transition-all">
+                        <span class="text-brand-primary font-mono">"Rent 1200 1st"</span>
+                        <span class="text-app-muted"> — Add rent due on the 1st</span>
+                    </button>
+                </div>
+            </div>
+        
+            <!-- query search results -->
+            <div s-show="query.length > 0" class="max-h-60 overflow-y-auto p-2 space-y-1">
+                <div class="px-3 py-2 flex justify-between items-center">
+                    <span class="text-[10px] font-black text-app-muted uppercase tracking-widest">Found in Records</span>
+                    <span class="text-[10px] text-app-muted/50"
+                        s-text="`${filterBills($store.BillStore.bills, query).length} matches`"></span>
+                </div>
+        
+                <template s-for="bill in filterBills($store.BillStore.bills, query)">
+                    <!-- select a bill -->
+                    <div on:click="$store.SelectedBillStore.selectBill(bill)"
+                        class="group flex items-center justify-between p-3 rounded-xl hover:bg-app-bg border border-transparent hover:border-app-border transition-all cursor-pointer">
+        
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-1.5 h-1.5 rounded-full bg-brand-primary/40 group-hover:bg-brand-primary transition-colors">
+                            </div>
+                            <div class="flex flex-col">
+                                <span s-text="bill.name"
+                                    class="font-bold text-app-text group-hover:text-brand-primary transition-colors"></span>
+                                <span class="text-[10px] text-app-muted capitalize" s-text="bill?.metadata?.category"></span>
+                            </div>
+                        </div>
+        
+                        <div class="flex items-center gap-4 text-right">
+                            <span
+                                class="hidden sm:block px-2 py-0.5 rounded-md bg-app-bg text-app-muted text-[9px] font-bold uppercase tracking-tighter"
+                                s-text="bill.recurrence"></span>
+        
+                            <div class="flex flex-col items-end min-w-15">
+                                <span class="text-xs font-black text-app-text"
+                                    s-text="`${bill.currency} ${bill.amount}`"></span>
+                                <span class="text-[9px] text-app-muted font-medium" s-text="formatDate(bill.due_date)"></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+        
+                <div s-show="filterBills($store.BillStore.bills, query).length === 0"
+                    class="py-8 text-center bg-app-bg  rounded-xl border border-dashed border-app-border">
+                    <p class="text-xs font-bold text-app-muted">No records found for "<span s-text="query"
+                            class="text-app-text"></span>"</p>
+                    <p class="text-[10px] text-app-muted/60 mt-1">Check your spelling or add it as a new bill above.</p>
+                </div>
+            </div>
+        </div>
+    
+        <div s-state="{settingsOpen:false, notificationsOpen:false}" class="flex items-center gap-2">
+            <div class="flex items-center">
+    
+                <button on:click="settingsOpen = true"
+                    class="group p-2 rounded-xl hover:bg-brand-primary/5 transition-all duration-300 flex items-center gap-2">
+                    <div
+                        class="w-9 h-9 flex items-center justify-center rounded-lg bg-app-bg border border-app-border group-hover:border-brand-primary/30 transition-all">
+                        <svg class="w-4 h-4 text-app-muted group-hover:text-brand-primary transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <circle cx="12" cy="12" r="3" stroke-width="1.5" />
+                        </svg>
+                    </div>
+                </button>
+    
+                <!-- will "s-show" only show when notification pipeline -->
+                <!-- <button x-show="false" on:click="notificationsOpen = true"
+                    class="group p-2 rounded-xl hover:bg-brand-primary/5 transition-all duration-300 flex items-center gap-2">
+                    <div
+                        class="relative w-9 h-9 flex items-center justify-center rounded-lg bg-app-bg border border-app-border group-hover:border-brand-primary/30 transition-all">
+                        <div class="absolute top-2 right-2 w-1.5 h-1.5 bg-brand-primary rounded-full ring-2 ring-app-card">
+                        </div>
+    
+                        <svg class="w-4 h-4 text-app-muted group-hover:text-brand-primary transition-colors" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                    </div>
+                </button> -->
+    
+            </div>
+    
+            <template s-if="settingsOpen">
+                <div class="fixed inset-0 z-100">
+                    <div on:click="settingsOpen = false" class="fixed inset-0 bg-slate-500/10 backdrop-blur-sm">
+                    </div>
+                
+                    <aside
+                        class="fixed top-0 left-0 h-full w-[85%] max-w-90 bg-app-card border-r border-app-border/40 shadow-[40px_0_80px_-20px_rgba(0,0,0,0.05)] flex flex-col rounded-r-4xl">
+                
+                        <div class="pt-16 px-10 pb-10 flex items-center justify-between">
+                            <h2 class="text-2xl font-light text-app-text tracking-tight">Preferences</h2>
+                
+                            <button on:click="settingsOpen = false"
+                                class="p-2 hover:bg-app-border/10 rounded-full transition-colors text-app-muted">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                
+                        <div class="flex-1 overflow-y-auto px-10 space-y-12">
+                
+                            <section>
+                                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-4">Secure Identity</h3>
+                                <div class="flex items-center gap-4 py-3 border-b border-app-border/10">
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-brand-primary/5 flex items-center justify-center text-brand-primary">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-app-text">Local Protection</p>
+                                        <p class="text-[10px] text-app-muted">Your data never leaves this device.</p>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="space-y-6">
+                                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest">Display</h3>
+                
+                                <div class="flex items-center justify-between group">
+                                    <span class="text-xs font-medium text-app-text">Regional Currency</span>
+                                    <select s-value="$store.UserStore.settings.currency"
+                                        on:change="$store.UserStore.updateSettings({currency: $target.value})"
+                                        class="bg-transparent outline-none border-none text-xs font-bold text-brand-primary cursor-pointer focus:ring-0">
+                                        <option>USD</option>
+                                        <option>EUR </option>
+                                        <option>GBP </option>
+                                    </select>
+                                </div>
+                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-medium text-app-text">Appearance</span>
+                                    <div class="flex items-center gap-1 bg-app-border/10 p-1 rounded-full">
+                                        <button on:click="$store.UserStore.updateSettings({theme: 'light'})"
+                                            s-class="$store.UserStore.settings.theme === 'light' ? 'bg-brand-primary/10' : 'text-brand-primary' "
+                                            class="p-2 rounded-full transition-all text-app-muted
+                                                  ">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                            </svg>
+                                        </button>
+                                        <button on:click="$store.UserStore.updateSettings({theme: 'dark'})"
+                                            s-class="$store.UserStore.settings.theme === 'dark' ? 'bg-brand-primary/10' : 'text-brand-primary' "
+                                            class="p-2 rounded-full transition-all text-app-muted
+                                                   ">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </section>
+                
+                            <section class="pt-8">
+                                <h3 class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-4">Privacy</h3>
+                                <div s-state="{showModal: false}"
+                                    class="bg-slate-50/50 dark:bg-white/5 border border-app-border/20 rounded-2xl p-5">
+                                    <p class="text-[10px] text-app-muted leading-relaxed mb-4">Resetting will remove all locally stored
+                                        budget information and financial history.</p>
+                                    <button on:click="showModal=true" class=" text-[10px] font-black text-status-overdue uppercase tracking-widest hover:underline
+                                        transition-all">
+                                        Delete Data & Reset
+                                    </button>
+                
+                                    <template s-if="showModal">
+                                        <!-- NOTE: make this more generic so that it can be reused for other confirmation modals -->
+                                        <div class="fixed inset-0 z-100 flex items-center justify-center p-4">
+                                        
+                                            <div class="absolute inset-0 bg-app-bg/60 backdrop-blur-md" on:click="cancel"></div>
+                                        
+                                            <div
+                                                class="relative w-full max-w-xs bg-app-card border border-app-border rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center transform transition-all">
+                                        
+                                                <div class="w-12 h-12 bg-status-overdue/10 rounded-full flex items-center justify-center mb-6">
+                                                    <svg class="w-6 h-6 text-status-overdue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                    </svg>
+                                                </div>
+                                        
+                                                <h3 class="text-lg font-mono font-bold text-app-text tracking-tighter mb-2">Permanently Purge Data?</h3>
+                                                <p class="text-[11px] text-app-muted font-medium leading-relaxed mb-8">
+                                                    This will erase all of your data and settings. Are you absolutely sure you want to
+                                                                proceed?
+                                                </p>
+                                        
+                                                <div class="flex flex-col w-full gap-3">
+                                                    <button on:click="()&#x3D;&gt;{
+                                                                    $store.UserStore.purgeAllData();
+                                                                    showModal&#x3D;false;
+                                                                }"
+                                                        class="w-full py-3 bg-status-overdue text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 active:scale-[0.98] transition-all">
+                                                        Confirm
+                                                    </button>
+                                        
+                                                    <button on:click="showModal&#x3D;false"
+                                                        class="w-full py-3 bg-app-bg border border-app-border text-app-muted text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:text-app-text transition-all">
+                                                        Nevermind
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>                    </template>
+                                </div>
+                            </section>
+                        </div>
+                
+                        <div class="p-10 border-t border-app-border/10">
+                            <p class="text-[10px] text-app-muted text-center italic font-serif">Architected for Financial Clarity</p>
+                        </div>
+                    </aside>
+                </div>        </template>
+            <!-- notification handlebar component ref here!!! -->
+        </div>
+    </header>
+    <div class="flex flex-1 min-h-0 relative">
+      <!-- backdrop -->
+      <div s-class="$store.OpenPanelStore.openPanel ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+          on:click="$store.OpenPanelStore.setPanel(null)" class="fixed inset-0 bg-black/30 z-30 lg:hidden
+               transition-opacity duration-200">
+      </div>      <!-- Sidebar -->
+      <aside
+        s-class="$store.OpenPanelStore.openPanel === 'left' ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+        class="absolute lg:static inset-y-0 left-0 z-40
+             w-72 lg:flex-1
+             pb-10
+             bg-app-card border-r border-app-border
+             transform transition-transform duration-200
+             lg:block
+             overflow-y-auto min-h-0">
+        <div class="p-4 border-b border-app-border">
+            <h2 class="text-sm font-semibold text-app-muted uppercase tracking-wide">
+                Upcoming Obligations
+            </h2>
+            <p class="font-semibold mt-1">Bill Stream.</p>
+        </div>
+        
+        <div class="p-4 space-y-3">
+            <template s-for="bill in $store.BillStore.bills">
+                <!-- select a bill -->
+                <div on:click="()=>{
+                    $store.SelectedBillStore.selectBill(bill);
+                    $store.BillStore.bills = $store.BillStore.bills.map(b => ({
+                        ...b,
+                        selected: b.id === bill.id
+                    }));
+                    $store.OpenPanelStore.setPanel(null);
+        
+                }" s-class="$store.SelectedBillStore.selectedBill?.id === bill.id ? 'bg-brand-primary/5 border-brand-primary' : 'border-app-border' " class="border border-app-border bg-app-card  hover:bg-app-bg dark:bg-app-bg dark:hover:bg-app-bg/70
+                 rounded-xl px-3 py-2.5
+                  transition-transform duration-150
+                 cursor-pointer">
+        
+                    <!-- Top Row -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-app-text" s-text="bill.name"></span>
+                        <span class="font-mono text-sm font-semibold"
+                            s-text="$store.HelpersStore.$formatCurrency(bill.amount, $store.UserStore.settings.currency)"></span>
+                    </div>
+        
+                    <!-- Bottom Row -->
+                    <div class="flex items-center justify-between mt-1.5">
+                        <p class="text-[11px]" s-class="
+                                        bill.status === 'overdue'
+                                        ? 'text-status-overdue'
+                                        : 'text-app-muted'
+                                    " s-text="$store.HelpersStore.$formatDate(bill.due_date)">
+                        </p>
+        
+                        <span s-show="bill.status === 'overdue'" class="px-2 py-0.5 rounded-full
+                     text-[10px] font-medium
+                     bg-status-overdue/10 text-status-overdue">
+                            Overdue
+                        </span>
+                    </div>
+        
+                </div>
+            </template>
+        
+            <!-- focuses query input -->
+            <button on:click="$refs.queryInput.focus()" class="w-full flex items-center justify-between
+                       rounded-lg border border-dashed border-app-border
+                       bg-app-bg/60
+                       px-3 py-2
+                       text-left
+                       hover:bg-app-bg
+                       transition-colors">
+            
+                <span class="flex items-center gap-2 text-xs text-app-muted">
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    Add bill
+                </span>
+            
+                <span class="text-[10px] text-app-muted font-mono">
+                    +
+                </span>
+            </button></div>      </aside>
+
+      <!-- Main -->
+      <main class="flex-2 p-6 pb-20 space-y-6
+                 overflow-y-auto min-h-0">
+        <!-- main head -->
+        <div
+            class="bg-app-card border border-app-border rounded-4xl p-6 sm:p-10 max-w-3xl mx-auto relative overflow-hidden shadow-xl flex flex-col items-center">
+            <div class="sm:mb-8 w-full max-w-md">
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <div class="h-px w-4 bg-brand-primary/20"></div>
+                    <p class="text-[9px] font-black text-brand-primary tracking-[0.3em] uppercase">Inflow Parameters</p>
+                    <div class="h-px w-4 bg-brand-primary/20"></div>
+                </div>
+        
+                <div class="w-full max-w-md mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-8 sm:gap-y-0 items-start max-w-4xl mx-auto">
+        
+                        <div s-state="FieldEditState"
+                            class="flex flex-col sm:items-end sm:pr-10 sm:border-r sm:border-app-border/20">
+        
+                            <div class="h-4 flex items-center justify-center sm:justify-end">
+                                <p class="text-[8px] font-black text-app-muted uppercase tracking-widest">
+                                    Paycheck
+                                </p>
+                            </div>
+        
+                            <div class="h-12 flex items-center justify-center sm:justify-end gap-2 group">
+                                <h2 s-show="activeField !== 'check'"
+                                    class="text-lg font-mono font-bold text-app-text tracking-tight">
+                                    <span
+                                        s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.next_deposit_amount, $store.UserStore.settings.currency)"></span>
+                                </h2>
+        
+                                <input s-show="activeField === 'check'" on:change="activeFieldValue = parseFloat($target.value)"
+                                    s-effect-focus type="number" s-value="$store.BudgetStore.next_deposit_amount"
+                                    class="bg-transparent border-b border-brand-primary outline-none font-mono font-bold text-lg text-app-text w-24 text-center sm:text-right">
+        
+                                <div on:click="setActiveField('check', (v)=> $store.BudgetStore.updateInflowParams('next_deposit_amount', v ))"
+                                    class="cursor-pointer">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                        </div>
+                            </div>
+        
+                            <div class="h-6 flex items-center justify-center sm:justify-end" s-state="FieldEditState">
+                                <span s-show="activeField !== 'recurrence'"
+                                    class="text-[9px] font-bold text-app-muted uppercase"
+                                    s-text="$store.BudgetStore.pay_frequency">
+                                </span>
+        
+                                <select on:change="activeFieldValue = $target.value" s-show="activeField === 'recurrence'"
+                                    s-effect-focus s-value="$store.SelectedBillStore.bill.recurrence"
+                                    class="bg-transparent border-b-2 border-brand-soft outline-none font-mono text-sm text-app-text w-auto text-right uppercase cursor-pointer scheme-dark">
+                                    <option value="monthly">Monthly</option>
+                                    <option value="bi-weekly">Bi-Weekly</option>
+                                    <option value="weekly">Weekly</option>
+                                </select>
+                                <div on:click="setActiveField('recurrence', (v)=> $store.BudgetStore.updateInflowParams('pay_frequency', v))"
+                                    class="cursor-pointer ml-1">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                        </div>
+                            </div>
+                        </div>
+        
+                        <div s-state="FieldEditState" class="flex flex-col sm:items-start sm:pl-10">
+        
+                            <div class="h-4 flex items-center justify-center sm:justify-start">
+                                <p class="text-[8px] font-black text-app-muted uppercase tracking-widest">
+                                    Next Deposit
+                                </p>
+                            </div>
+        
+                            <div class="h-12 flex items-center justify-center sm:justify-start gap-2 group">
+                                <h2 s-show="activeField !== 'date'"
+                                    class="text-lg font-mono font-bold text-app-text tracking-tight">
+                                    <span
+                                        s-text="$store.HelpersStore.$formatDate($store.BudgetStore.next_deposit_date, { relative: false, prefix: false })"></span>
+                                </h2>
+        
+                                <input on:change="activeFieldValue = $target.value" s-show="activeField === 'date' "
+                                    s-effect-focus type="date"
+                                    s-value="$store.HelpersStore.$formatDate($store.BudgetStore.next_deposit_date, { relative: false, prefix: false, format:'YYYY-MM-DD' })"
+                                    class="bg-transparent rounded-lg font-mono font-bold text-xs text-app-text border border-app-border/50 px-2 py-1 outline-none focus:border-brand-primary transition-all">
+        
+                                <div on:click="setActiveField('date', (v)=> $store.BudgetStore.updateInflowParams('next_deposit_date', v))"
+                                    class="cursor-pointer">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                        </div>
+                            </div>
+        
+                            <div class="h-6 flex items-center justify-center sm:justify-start">
+                                <p class="text-[9px] font-bold text-brand-primary uppercase">
+                                    Est. Monthly: <span class="text-app-text/60"
+                                        s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.monthly_income_anchor, $store.UserStore.settings.currency)"></span>
+                                </p>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+        
+            <div class="relative py-6 w-full">
+                <div class="absolute inset-0 bg-brand-primary/5 blur-[50px] rounded-full"></div>
+        
+                <div class="relative z-10 text-center">
+                    <div s-state="{open: false}" on:click="()=>{open=!open; setTimeout(()=>open=false,1000*5)}"
+                        class="relative flex gap-2 items-center justify-center group">
+                        <p class="text-sm font-light text-app-muted tracking-wide uppercase text-center">SAFE-TO-SPEND
+                        </p>
+                        <div s-hover="open = !open"
+                            class="cursor-help text-brand-primary/40 hover:text-brand-primary transition-colors duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+        
+                        <div s-show="open" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-64 p-4 z-50
+                                        bg-app-bg border border-app-border rounded-2xl shadow-2xl
+                                        flex flex-col gap-2 text-center
+                                         pointer-events-none 
+                                        transition-all duration-300 ease-out transform scale-95 
+                                        origin-[bottom_center]">
+                        
+                            <p class="text-[11px] font-medium text-app-text/90 leading-relaxed">
+                                Exactly what you can spend <span class="font-bold">right now</span> until your next paycheck,
+                                after reserving enough for upcoming bills.
+                            </p>
+                        </div>            </div>
+        
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold font-mono tracking-tighter leading-tight"
+                        s-scroll-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.safe_to_spend, $store.UserStore.settings.currency)">
+                    </h1>
+                </div>
+            </div>
+        
+            <div class="grid grid-cols-2 gap-0 mt-8 pt-8 border-t border-app-border/20 w-full max-w-md">
+                <div class="text-center border-r border-app-border/20">
+                    <p class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-1">In Bank</p>
+                    <div s-state="FieldEditState" class="flex items-center justify-center">
+                        <p s-show="activeField != 'in-bank' " class="text-lg font-mono font-bold text-app-text/90"
+                            s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.cleared_balance, $store.UserStore.settings.currency)">
+                        </p>
+        
+                        <input on:change="activeFieldValue = parseFloat($target.value)" s-show="activeField === 'in-bank' "
+                            s-effect-focus type="number" s-value="$store.BudgetStore.cleared_balance"
+                            class="bg-transparent border-b border-brand-primary outline-none font-mono font-bold text-lg text-app-text w-24 text-center sm:text-right">
+        
+                        <div on:click="setActiveField('in-bank', (v)=> $store.BudgetStore.updateInflowParams('cleared_balance', v))"
+                            class="cursor-pointer">
+                            <div class="flex items-center gap-4 py-2 group cursor-default">
+                                <div class="flex-1">
+                                    <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                    </span>
+                                </div>
+                            
+                                <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                    <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                        s-text="isEditing ? 'Save' : 'Edit'">
+                                    </span>
+                            
+                                    <div class="relative w-4 h-4">
+                                        <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                        <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>                </div>
+                    </div>
+                </div>
+        
+                <div class="text-center">
+                    <p class="text-[9px] font-black text-app-muted uppercase tracking-widest mb-1">Obligations</p>
+                    <p class="text-lg pb-5 font-mono font-bold text-status-overdue"
+                        s-scroll-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.total_obligations, $store.UserStore.settings.currency)">
+                    </p>
+                </div>
+                <p class="text-app-muted text-[10px]">
+        
+                </p>
+            </div>
+        
+            <template s-if="$store.BudgetStore.low_balance_alert">
+                <div class="pt-5 mt-5 border-t border-app-border/30">
+                    <div class="relative flex items-start gap-3 p-4 pr-12 sm:gap-4 sm:pr-12 bg-status-overdue/5 border border-status-overdue/20 rounded-2xl">
+            
+                        <div class="hidden sm:flex shrink-0 w-8 h-8 rounded-full bg-status-overdue/10 items-center justify-center">
+                            <svg class="w-4 h-4 text-status-overdue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+            
+                        <div class="min-w-0 flex-1 space-y-1">
+                            <p class="text-xs sm:text-sm font-black text-status-overdue uppercase tracking-tight">
+                                Low Balance Alert — Projected <span
+                                    s-text="$store.BudgetStore.low_balance_alert?.projectedDate"></span>
+                            </p>
+            
+                            <p class="text-[10px] sm:text-xs text-app-muted leading-relaxed">
+                                Balance is projected to dip to
+                                <span class="font-mono font-bold text-status-overdue"
+                                    s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.low_balance_alert?.dipAmount, $store.UserStore.settings.currency)">
+                                </span>
+                                before payday.
+                                <span s-text="$store.BudgetStore.low_balance_alert?.triggerBill"></span>
+                                (<span class="font-mono font-bold"
+                                    s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.low_balance_alert?.triggerAmount, $store.UserStore.settings.currency)"></span>)
+                                is <span class="font-bold text-app-text"
+                                    s-text="$store.BudgetStore.low_balance_alert?.triggerDate"></span>.
+                            </p>
+                        </div>
+            
+                        <button
+                            on:click="$store.BudgetStore.clearLowBalanceAlert()"
+                            type="button"
+                            class="absolute right-3 top-3 inline-flex h-6 w-6 items-center justify-center rounded-full border border-status-overdue/30 bg-app-bg/60 text-xs font-bold text-status-overdue transition hover:bg-status-overdue/10"
+                            aria-label="Clear low balance alert"
+                            @click="$store.BudgetStore.low_balance_alert = null"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </template></div>
+        
+        <div class="max-w-3xl mx-auto">
+            <template s-if="!!$store.SelectedBillStore.selectedBill?.id">
+                <div s-ref="selectedBillRef" class="bg-app-card border border-app-border rounded-2xl p-6">
+            
+                    <div s-state="{showModal: false}" class="mb-4 flex flex-1/3 justify-end">
+                        <div class="group/del relative flex items-center justify-center cursor-pointer p-1.5 transition-all duration-200 rounded-lg hover:bg-status-overdue/10"
+                            on:click="showModal&#x3D;true">
+                        
+                            <svg class="w-4 h-4 text-app-muted/60 group-hover/del:text-status-overdue transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        
+                            <span
+                                class="absolute bottom-full mb-2 hidden group-hover/del:block bg-status-overdue text-white text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded">
+                                Delete
+                            </span>
+                        </div>            <template s-if="showModal">
+                            <!-- NOTE: make this more generic so that it can be reused for other confirmation modals -->
+                            <div class="fixed inset-0 z-100 flex items-center justify-center p-4">
+                            
+                                <div class="absolute inset-0 bg-app-bg/60 backdrop-blur-md" on:click="cancel"></div>
+                            
+                                <div
+                                    class="relative w-full max-w-xs bg-app-card border border-app-border rounded-3xl p-8 shadow-2xl flex flex-col items-center text-center transform transition-all">
+                            
+                                    <div class="w-12 h-12 bg-status-overdue/10 rounded-full flex items-center justify-center mb-6">
+                                        <svg class="w-6 h-6 text-status-overdue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                    </div>
+                            
+                                    <h3 class="text-lg font-mono font-bold text-app-text tracking-tighter mb-2">Delete Entry?</h3>
+                                    <p class="text-[11px] text-app-muted font-medium leading-relaxed mb-8">
+                                        This action is permanent and will immediately affect your Safe-to-Spend calculation.
+                                    </p>
+                            
+                                    <div class="flex flex-col w-full gap-3">
+                                        <button on:click="()&#x3D;&gt;{
+                                            $store.BillStore.delete($store.SelectedBillStore.selectedBill?.id);
+                                            showModal&#x3D;false;
+                                            }"
+                                            class="w-full py-3 bg-status-overdue text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:brightness-110 active:scale-[0.98] transition-all">
+                                            Confirm
+                                        </button>
+                            
+                                        <button on:click="showModal&#x3D;false"
+                                            class="w-full py-3 bg-app-bg border border-app-border text-app-muted text-[10px] font-black uppercase tracking-[0.2em] rounded-xl hover:text-app-text transition-all">
+                                            Nevermind
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>            </template>
+                    </div>
+                    <div s-state="FieldEditState" class="header flex px-1 pb-1.5 border-b border-app-border">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-black text-app-text tracking-tighter" s-show="activeField !== 'name'"
+                                s-text="$store.SelectedBillStore.selectedBill?.name" on:click="isEditing && (activeField = 'name')">
+                            </h3>
+            
+                            <!-- shows when in editing mode -->
+                            <input on:change="activeFieldValue = $target.value" s-show="activeField === 'name' " s-effect-focus
+                                type="text" s-value="$store.SelectedBillStore.selectedBill?.name"
+                                class="bg-transparent border-b-2 border-brand-soft outline-none font-black text-lg text-app-text w-full">
+            
+            
+            
+                            <p class=" text-xs mt-1 font-mono pb-1 text-brand-accent">
+                                Bill Stream · Due · <span
+                                    s-text="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: true, prefix: false })"></span>
+                            </p>
+                        </div>
+                        <!-- place isEditing state at the top to now when to trigger fields to be be in editing mode -->
+                        <div
+                            on:click="setActiveField('name', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'name', v))">
+                            <div class="flex items-center gap-4 py-2 group cursor-default">
+                                <div class="flex-1">
+                                    <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                    </span>
+                                </div>
+                            
+                                <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                    <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                        s-text="isEditing ? 'Save' : 'Edit'">
+                                    </span>
+                            
+                                    <div class="relative w-4 h-4">
+                                        <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                        <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>            </div>
+                    </div>
+            
+            
+                    <!-- fields -->
+                    <div class="space-y-3 mt-4">
+            
+                        <div s-state="FieldEditState" class="flex justify-between items-center">
+                            <span class="text-app-muted shrink-0">Amount</span>
+                            <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                                <span s-show="activeField !== 'amount'"
+                                    s-text="$store.HelpersStore.$formatCurrency($store.SelectedBillStore.selectedBill?.amount, $store.UserStore.settings.currency)"
+                                    class="font-black text-app-text"></span>
+            
+                                <input on:change="activeFieldValue = parseFloat($target.value)" s-show="activeField === 'amount'"
+                                    s-effect-focus type="number" s-value="$store.SelectedBillStore.selectedBill?.amount"
+                                    class="bg-transparent border-b-2 border-brand-soft outline-none font-black text-sm text-app-text w-auto max-w-25 text-right">
+            
+                                <div
+                                    on:click="setActiveField('amount', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'amount', v))">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                    </div>
+                            </div>
+                        </div>
+            
+                        <div s-state="FieldEditState" class="flex justify-between items-center">
+                            <span class="text-app-muted shrink-0">Due Date</span>
+                            <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                                <span s-show="activeField !== 'due_date'" class="font-mono text-sm text-app-text"
+                                    s-text="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: false, prefix: false})"></span>
+            
+                                <!-- needs to match web browsers input/> type="date" -> format -->
+                                <input on:change="activeFieldValue = $target.value" s-show="activeField === 'due_date'"
+                                    s-effect-focus type="date"
+                                    s-value="$store.HelpersStore.$formatDate($store.SelectedBillStore.selectedBill?.due_date, { relative: false, prefix: false, format:'YYYY-MM-DD' })"
+                                    class="bg-transparent rounded-lg font-mono font-bold text-xs text-app-text border border-app-border/50 px-2 py-1 outline-none focus:border-brand-primary transition-all">
+            
+                                <div
+                                    on:click="setActiveField('due_date', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'due_date', v))">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                    </div>
+                            </div>
+                        </div>
+            
+                        <div s-state="FieldEditState" class="flex justify-between items-center">
+                            <span class="text-app-muted shrink-0">Category</span>
+                            <div class="flex items-center gap-3 justify-end ml-4 overflow-hidden">
+                                <span s-show="activeField !== 'category'"
+                                    class="font-mono text-sm text-app-text uppercase tracking-tighter"
+                                    s-text="$store.SelectedBillStore.selectedBill?.metadata.category"></span>
+                                <!-- CATEGORY OPTIONS -->
+                                <select on:change="activeFieldValue = $target.value"
+                                    class="bg-transparent border-b-2 border-brand-soft outline-none font-mono text-sm text-app-text w-auto text-right cursor-pointer scheme-dark"
+                                    s-show="activeField === 'category' " s-effect-focus name="bill-category" id="bill-category"
+                                    s-value="$store.SelectedBillStore.selectedBill?.metadata.category">
+                                    <option value="housing">
+                                        housing
+                                    </option>
+                                    <option value="utilities">
+                                        utilities
+                                    </option>
+                                    <option value="transportation">
+                                        transportation
+                                    </option>
+                                    <option value="food">
+                                        food
+                                    </option>
+                                    <option value="health">
+                                        health
+                                    </option>
+                                    <option value="financial">
+                                        financial
+                                    </option>
+                                    <option value="personal">
+                                        personal
+                                    </option>
+                                </select>
+            
+                                <div
+                                    on:click="setActiveField('category', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'metadata', { ...$store.SelectedBillStore.selectedBill?.metadata, category: v }))">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                    </div>
+                            </div>
+                        </div>
+            
+                        <div s-state="FieldEditState" class="flex justify-between items-center">
+                            <span class="text-app-muted shrink-0">Recurrence</span>
+                            <div class="flex items-center gap-3 justify-end ml-4">
+                                <span s-show="activeField !== 'recurrence'"
+                                    class="font-mono text-sm text-app-text uppercase tracking-tighter"
+                                    s-text="$store.SelectedBillStore.selectedBill?.recurrence"></span>
+            
+                                <select on:change="activeFieldValue = $target.value" s-show="activeField === 'recurrence'"
+                                    s-effect-focus s-value="$store.SelectedBillStore.selectedBill?.recurrence"
+                                    class="bg-transparent border-b-2 border-brand-soft outline-none font-mono text-sm text-app-text w-auto text-right cursor-pointer scheme-dark">
+                                    <option value="monthly">monthly</option>
+                                    <option value="bi-weekly">bi-Weekly</option>
+                                    <option value="weekly">weekly</option>
+                                    <option value="yearly">yearly</option>
+                                </select>
+            
+                                <div
+                                    on:click="setActiveField('recurrence', (v)=> $store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'recurrence', v))">
+                                    <div class="flex items-center gap-4 py-2 group cursor-default">
+                                        <div class="flex-1">
+                                            <span s-show="!isEditing" class="text-sm font-black text-app-text tracking-tighter">
+                                            </span>
+                                        </div>
+                                    
+                                        <div class="flex items-center gap-2 text-app-muted hover:text-brand-primary transition-colors">
+                                            <span class="hidden sm:inline text-[10px] font-black uppercase tracking-widest"
+                                                s-text="isEditing ? 'Save' : 'Edit'">
+                                            </span>
+                                    
+                                            <div class="relative w-4 h-4">
+                                                <svg s-show="!isEditing" class="absolute inset-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                                <svg s-show="isEditing" class="absolute inset-0 text-brand-primary" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>                    </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            
+                    <!-- if overdue give in app option to mark as paid -->
+                    <div s-show="$store.SelectedBillStore.selectedBill?.status == 'overdue' "
+                        class="mt-3 flex items-center justify-between gap-3
+                     rounded-lg border
+                     border-[color-mix(in_srgb,var(--status-red)_30%,transparent)]
+                     bg-[color-mix(in_srgb,var(--status-red)_6%,transparent)]
+                     px-3 py-2">
+            
+                        <div>
+                            <p class="text-xs font-medium text-status-danger">
+                                Bill overdue
+                            </p>
+                            <p class="text-[11px] text-app-muted">
+                                Already paid? Mark to clear it
+                            </p>
+                        </div>
+            
+                        <!-- Mark as paid button -->
+                        <button on:click="$store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'status', 'paid')"
+                            class="text-xs font-medium
+                       px-2.5 py-1
+                       rounded-md
+                       bg-status-paid/10
+                       text-status-paid
+                       hover:bg-status-paid/20
+                       transition-colors">
+                            Mark paid
+                        </button>
+                    </div>
+            
+                    <!-- metadata fields -->
+                    <div class="mt-6">
+                    
+                        <!-- Fields -->
+                        <div class="space-y-3">
+                            <!-- Tax Deductible -->
+                            <div class="flex items-center justify-between
+                                    py-2 px-2 rounded-lg
+                                    hover:bg-app-bg transition"
+                                    on:click="$store.BillStore.update($store.SelectedBillStore.selectedBill?.id, 'metadata', { ...$store.SelectedBillStore.selectedBill?.metadata, is_tax_deductible: !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible })"
+                                      >
+                    
+                                <!-- metadata key-->
+                                <span class="flex items-center gap-2 text-sm">
+                                    <svg class="w-3.5 h-3.5 text-app-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round">
+                                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
+                                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                                    </svg>
+                                    Tax Deductible
+                                </span>
+                    
+                                <!-- metadata value -->
+                                <div class="flex items-center gap-2">
+                                    <span 
+                                    s-class="{'text-brand-primary': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible}"
+                                        s-text="$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible ? 'On' :'Off' "
+                                    class="text-[11px] font-mono">
+                                        Off
+                                    </span>
+                    
+                                    <!-- toggle -->
+                                    <div 
+                                    s-class="{
+                                        'bg-brand-primary/45': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                                        'bg-app-muted': !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible
+                                    }"
+                                    class="w-8 h-4 rounded-full relative">
+                                        <div 
+                                       s-class="{
+                                                    'left-0.5': !$store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                                                    'right-0.5': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible,
+                                                    'bg-brand-primary': $store.SelectedBillStore.selectedBill?.metadata.is_tax_deductible
+                                                }" class="absolute top-0.5
+                                          w-3 h-3 rounded-full
+                                          bg-app-card border border-app-border"></div>
+                                    </div>
+                                </div>
+                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            
+            <!-- default view -->
+            <div s-show="!$store.SelectedBillStore.selectedBill?.id"
+                class="mt-6 space-y-4 p-15 bg-app-bg dark:bg-app-card border border-app-border rounded-lg shadow-xs">
+                <div class="flex flex-col items-center justify-center text-app-muted">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                    <p class="my-2 text-sm font-medium">Select a bill to see details</p>
+                    <p class="text-sm sr-only sm:not-sr-only">Click any bill in the stream to view and edit its metadata.</p>
+                </div>
+                <div class="max-w-[50%] bg-app-bg/20 mx-auto border border-dashed border-brand-soft rounded-lg px-2 py-2">
+                    <!-- focuses query input -->
+                    <button on:click="$refs.queryInput.focus()" class="w-full flex items-center justify-between
+                               rounded-lg border border-dashed border-app-border
+                               bg-app-bg/60
+                               px-3 py-2
+                               text-left
+                               hover:bg-app-bg
+                               transition-colors">
+                    
+                        <span class="flex items-center gap-2 text-xs text-app-muted">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Add bill
+                        </span>
+                    
+                        <span class="text-[10px] text-app-muted font-mono">
+                            +
+                        </span>
+                    </button>    </div>
+            </div></div>      </main>
+
+      <!-- backdrop -->
+      <div s-class="$store.OpenPanelStore.openPanel ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+          on:click="$store.OpenPanelStore.setPanel(null)" class="fixed inset-0 bg-black/30 z-30 lg:hidden
+               transition-opacity duration-200">
+      </div>      <!-- Right Panel -->
+      <aside
+        s-class="$store.OpenPanelStore.openPanel === 'right' ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'"
+        class="absolute lg:static inset-y-0 right-0 z-40
+             w-72 lg:flex-1.5
+             bg-app-card border-l border-app-border
+             p-6 space-y-6
+             transform transition-transform duration-200
+             lg:block
+             overflow-y-auto min-h-0">
+        <div class="flex flex-col gap-4 pb-4 justify-between h-full">
+            <template s-if="$store.BudgetStore.categoryExposure.length">
+                <div s-state="{active: 0}" class="overflow-hidden overflow-y-auto">
+                    <h3 class="font-semibold">Budget Health.</h3>
+                    <div class="mt-4 flex gap-4 text-[10px] font-medium border-b border-app-border/50">
+                        <button s-class="{
+                    'text-brand-primary': active === 0,
+                    'border-b-2': active === 0,
+                    'border-brand-primary': active === 0,
+                    'text-app-muted': active !== 0,
+                    'font-bold': active === 0
+                    }" on:click="active = 0" class="pb-1 transition-colors">Category Exposure</button>
+                        <button s-class="{
+                    'text-brand-primary': active === 1,
+                    'border-b-2': active === 1,
+                    'border-brand-primary': active === 1,
+                    'text-app-muted': active !== 1,
+                    'font-bold': active === 0
+                    }" on:click="active = 1" class="pb-1 transition-colors">Commitment Ratio</button>
+                    </div>
+                    <!-- Category Exposure Content -->
+                    <div s-show="active==0" class="mt-6 space-y-5">
+                        <template s-for="category in $store.BudgetStore.categoryExposure">
+                            <div s-key="category.name" class="space-y-1">
+                                <div
+                                    class="flex justify-between text-[10px] font-black uppercase tracking-widest text-app-muted">
+                                    <span s-text="category.name"></span>
+                                    <span s-text="category.percentage.toFixed(2) + '%' "></span>
+                                </div>
+        
+                                <div class="h-1 w-full bg-app-bg rounded-full overflow-hidden">
+                                    <div class="h-full bg-brand-primary transition-all duration-500"
+                                        s-style="{width: category.percentage.toFixed(2) + '%'}" s-class="{
+                                                'bg-status-overdue': category.percentage > 50,
+                                                'bg-brand-primary': category.percentage <= 50
+                                            }">
+                                    </div>
+                                </div>
+        
+                                <p class="text-[10px] text-app-muted mt-1 font-medium">
+                                    <span class="text-app-text font-bold"
+                                        s-text="$store.HelpersStore.$formatCurrency(category.amount, $store.UserStore.settings.currency)"></span>
+                                    of <span
+                                        s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.monthly_income_anchor, $store.UserStore.settings.currency)"></span>
+                                    est. montly income
+                                </p>
+                            </div>
+                        </template>
+        
+                    </div>
+                    <!-- Commitment Ratio Content -->
+                    <div s-show="active==1"
+                        class="mt-5 bg-app-card border border-app-border rounded-4xl p-6 flex flex-col items-center shadow-xl max-w-sm mx-auto">
+        
+        
+        
+                        <!-- SEMI-CIRCLE GAUGE WITH ZONES -->
+                        <div class="relative w-48 h-24 overflow-hidden">
+                            <svg viewBox="0 0 100 50" class="w-full h-full">
+                                <!-- 1. BACKGROUND TRACK: DANGER ZONE (The full arc in a dim red/muted tone) -->
+                                <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="8"
+                                    class="text-status-overdue/10" stroke-linecap="round" />
+        
+                                <!-- 2. BACKGROUND TRACK: SAFE ZONE (A shorter arc, e.g., up to 70%, in a dim primary tone) -->
+                                <!-- stroke-dasharray="88 126" represents roughly 70% of the 126 unit semi-circle -->
+                                <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="8"
+                                    class="text-brand-primary/20" stroke-linecap="round" stroke-dasharray="88 126" />
+        
+                                <!-- 3. DYNAMIC PROGRESS BAR -->
+                                <!-- We calculate the dasharray: (Percentage / 100) * 126 -->
+                                <path d="M 10,50 A 40,40 0 0 1 90,50" fill="none" stroke="currentColor" stroke-width="10"
+                                    s-class="($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) > 0.7 ? 'text-status-overdue' : 'text-brand-primary'"
+                                    class="transition-all duration-1000 ease-out" stroke-linecap="round"
+                                    s-style="'stroke-dasharray: ' + (($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 126) + ' 126'" />
+                            </svg>
+        
+                            <!-- Center Percentage -->
+                            <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center">
+                                <span class="text-2xl font-mono font-bold tracking-tighter"
+                                    s-class="($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) > 0.7 ? 'text-status-overdue' : 'text-app-text'">
+                                    <span
+                                        s-text="Math.round(($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 100) + '%'"></span>
+                                </span>
+                            </div>
+                        </div>
+        
+                        <!-- COMPARISON DATA -->
+                        <div class="grid grid-cols-2 gap-8 w-full mt-6 pt-6 border-t border-app-border/10">
+                            <div class="text-center">
+                                <p class="text-[8px] font-black text-app-muted uppercase tracking-widest mb-1">Total Bills</p>
+                                <p class="text-xs font-mono font-bold text-status-overdue"
+                                    s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.total_obligations, $store.UserStore.settings.currency)"></p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[8px] font-black text-app-muted uppercase tracking-widest mb-1">Est. Income</p>
+                                <p class="text-xs font-mono font-bold text-app-text"
+                                    s-text="$store.HelpersStore.$formatCurrency($store.BudgetStore.monthly_income_anchor, $store.UserStore.settings.currency)"></p>
+                            </div>
+                        </div>
+        
+                        <!-- ARCHITECT'S INSIGHT -->
+                        <p class="mt-6 text-[10px] text-app-muted text-center leading-relaxed italic opacity-80 px-4">
+                            Approximately <span class="text-app-text font-bold"
+                                s-text="Math.round(($store.BudgetStore.total_obligations / $store.BudgetStore.monthly_income_anchor) * 100) + '%'"></span>
+                            of your monthly inflow is allocated to monthly obligations.
+                        </p>
+                    </div>
+                </div>
+            </template>
+        
+            <!-- default view -->
+            <template s-if="!$store.BudgetStore.categoryExposure.length">
+                <div class="p-5 bg-app-card rounded-[40px] border border-app-border shadow-sm transition-all duration-300">
+        
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-black text-app-text tracking-tighter">Category Exposure</h3>
+                    </div>
+        
+                    <div class="flex flex-col items-center py-4">
+        
+                        <div
+                            class="w-full space-y-4 mb-6 opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none">
+                            <div class="space-y-2">
+                                <div class="h-2 w-24 bg-app-muted rounded-full"></div>
+                                <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="h-2 w-16 bg-app-muted rounded-full"></div>
+                                <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="h-2 w-20 bg-app-muted rounded-full"></div>
+                                <div class="h-1.5 w-full bg-app-bg rounded-full"></div>
+                            </div>
+                        </div>
+        
+                        <div class="relative z-10 -mt-16 text-center">
+                            <div
+                                class="w-14 h-14 bg-app-bg border border-app-border rounded-2xl flex items-center justify-center text-brand-primary mx-auto mb-4 shadow-lg">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                            </div>
+                            <h4 class="text-sm font-black text-app-text tracking-tight mb-1">No commitments found</h4>
+                            <p
+                                class="text-[10px] font-bold text-app-muted uppercase tracking-widest max-w-45 mx-auto leading-relaxed">
+                                Add your first bill to see how it impacts your monthly load.
+                            </p>
+        
+                            <button on:click="()=>{
+                        $store.OpenPanelStore.closePanel();
+                        $refs.queryInput.focus();
+                        }" class="mt-4 px-6 py-3 bg-brand-primary/10 hover:bg-brand-primary text-brand-primary hover:text-white border border-brand-primary/20 rounded-xl font-black text-[9px] uppercase tracking-[0.2em] transition-all active:scale-95">
+                                Add First Bill
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>      </aside>
+      <!-- fab shows side panels on small screens -->
+      <div s-state="{ open:false }" class="fixed bottom-5 right-5 lg:hidden">
+      
+          <!-- Expanded split -->
+          <div s-class="open ? 'flex' : 'hidden'" class="bg-app-bg rounded-full p-2 shadow-md border border-app-border
+                 items-center gap-1 transition-all duration-200">
+      
+              <!-- LEFT HALF -->
+              <button class="bg-app-card text-app-text p-3 rounded-l-full 
+                   border border-app-border
+                   hover:bg-app-bg active:scale-95 transition"
+                  on:click="()=> { open=false; $store.OpenPanelStore.setPanel('left') }">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="6" height="18" rx="1" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8M13 12h8M13 17h8" />
+                  </svg>
+              </button>
+      
+              <!-- RIGHT HALF -->
+              <button class="bg-app-card text-app-text p-3 rounded-r-full 
+                   border border-app-border
+                   hover:bg-app-bg active:scale-95 transition"
+                  on:click="()=> { open=false; $store.OpenPanelStore.setPanel('right') }">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 14l4-4 3 3 5-5" />
+                  </svg>
+              </button>
+      
+          </div>
+      
+      
+          <!-- Collapsed FAB -->
+          <button s-state="{timerId: null}" s-class="open ? 'hidden' : 'flex'" on:click="()=> {
+              open = true;
+              if(timerId) {
+                  clearTimeout(timerId);
+                  return;
+              }
+              timerId = setTimeout(() => {
+                  open=false;
+                  timerId = null;
+              }, 2000);
+          }" class="size-12 bg-brand-primary text-white 
+                 rounded-full shadow-lg
+                 items-center justify-center
+                 hover:scale-105 active:scale-95
+                 transition">
+              <!-- split icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 12h16" />
+              </svg>
+          </button>
+      
+      </div>
+    </div>
+
+    <!-- toast -->
+    <div class="fixed bottom-6 right-6 z-100 flex flex-col gap-3 pointer-events-none">
+        <template s-for="toast in $store.ToastStore.toasts">
+            <div class="pointer-events-auto flex items-center w-full max-w-sm p-4 bg-app-card border border-brand-accent rounded-2xl shadow-xl animate-in slide-in-from-right-5 fade-in duration-300"
+                role="alert" s-key="toast.id">
+    
+                <div
+                    class="inline-flex items-center justify-center shrink-0 w-8 h-8 text-brand-primary bg-brand-soft rounded-lg">
+                    <svg s-show="toast.type === 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <svg s-show="toast.type !== 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0114 0z" />
+                    </svg>
+                </div>
+    
+                <div class="mx-4 text-sm font-bold text-app-text tracking-tight" s-text="toast.message"></div>
+    
+                <button on:click="$store.ToastStore.remove(toast.id)" type="button"
+                    class="ms-auto flex items-center justify-center text-app-muted hover:text-app-text hover:bg-app-bg rounded-lg w-8 h-8 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </template>
+    </div>  </div>
+</body>
+
+</html>
